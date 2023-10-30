@@ -45,7 +45,7 @@ public class TodoListServiceTests : BaseServiceTestConfiguration
         //Arrange
         var createTodoListModel = Builder<CreateTodoListModel>.CreateNew().Build();
         var todoList = Mapper.Map<TodoList>(createTodoListModel);
-        todoList.Id = Guid.NewGuid();
+        todoList.Id = 0;
 
         TodoListRepository.AddAsync(Arg.Any<TodoList>()).Returns(todoList);
 
@@ -67,7 +67,7 @@ public class TodoListServiceTests : BaseServiceTestConfiguration
         TodoListRepository.GetFirstAsync(Arg.Any<Expression<Func<TodoList, bool>>>()).Returns(todoList);
 
         //Act
-        Func<Task> callUpdateAsync = async () => await _sut.UpdateAsync(Guid.NewGuid(), updateTodoListModel);
+        Func<Task> callUpdateAsync = async () => await _sut.UpdateAsync(0, updateTodoListModel);
 
         //Assert
         await callUpdateAsync.Should().ThrowAsync<BadRequestException>()
@@ -81,7 +81,7 @@ public class TodoListServiceTests : BaseServiceTestConfiguration
     {
         //Arrange
         var updateTodoListModel = Builder<UpdateTodoListModel>.CreateNew().Build();
-        var todoListId = Guid.NewGuid();
+        var todoListId = 0;
         var todoList = Builder<TodoList>.CreateNew()
             .With(tl => tl.CreatedBy = new Guid().ToString())
             .With(tl => tl.Id = todoListId)
@@ -104,7 +104,7 @@ public class TodoListServiceTests : BaseServiceTestConfiguration
     public async Task DeleteAsync_Should_Delete_Entity_From_Database()
     {
         //Arrange
-        var todoListId = Guid.NewGuid();
+        var todoListId = 0;
         var todoList = Builder<TodoList>.CreateNew()
             .With(tl => tl.CreatedBy = new Guid().ToString())
             .With(tl => tl.Id = todoListId)
@@ -114,7 +114,7 @@ public class TodoListServiceTests : BaseServiceTestConfiguration
         TodoListRepository.DeleteAsync(Arg.Any<TodoList>()).Returns(todoList);
 
         //Act
-        var result = await _sut.DeleteAsync(Guid.NewGuid());
+        var result = await _sut.DeleteAsync(0);
 
         //Assert
         result.Id.Should().Be(todoListId);

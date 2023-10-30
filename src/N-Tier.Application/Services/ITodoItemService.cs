@@ -8,11 +8,11 @@ public interface ITodoItemService
     Task<CreateTodoItemResponseModel> CreateAsync(CreateTodoItemModel createTodoItemModel,
         CancellationToken cancellationToken = default);
 
-    Task<BaseResponseModel> DeleteAsync(Guid id, CancellationToken cancellationToken = default);
+    Task<BaseResponseModel> DeleteAsync(int id, CancellationToken cancellationToken = default);
 
     Task<IEnumerable<TodoItemResponseModel>>
-        GetAllByListIdAsync(Guid id, CancellationToken cancellationToken = default);
+        GetAllByListIdAsync(int id, CancellationToken cancellationToken = default);
 
-    Task<UpdateTodoItemResponseModel> UpdateAsync(Guid id, UpdateTodoItemModel updateTodoItemModel,
+    Task<UpdateTodoItemResponseModel> UpdateAsync(int id, UpdateTodoItemModel updateTodoItemModel,
         CancellationToken cancellationToken = default);
 }

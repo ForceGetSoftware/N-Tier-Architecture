@@ -5,7 +5,7 @@ namespace N_Tier.Application.Services;
 
 public interface IUserService
 {
-    Task<BaseResponseModel> ChangePasswordAsync(Guid userId, ChangePasswordModel changePasswordModel);
+    Task<BaseResponseModel> ChangePasswordAsync(int userId, ChangePasswordModel changePasswordModel);
 
     Task<ConfirmEmailResponseModel> ConfirmEmailAsync(ConfirmEmailModel confirmEmailModel);
 

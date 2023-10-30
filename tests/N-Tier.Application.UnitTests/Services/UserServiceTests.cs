@@ -55,7 +55,7 @@ public class UserServiceTests : BaseServiceTestConfiguration
         var result = await _sut.CreateAsync(createUserModel);
 
         // Assert
-        result.Id.Should().Be(applicationUser.Id);
+        result.Id.Should().Be(int.Parse(applicationUser.Id));
         await _userManager.Received(1).CreateAsync(Arg.Any<ApplicationUser>(), Arg.Any<string>());
         await _userManager.Received(1).GenerateEmailConfirmationTokenAsync(Arg.Any<ApplicationUser>());
         await _templateService.Received(1).GetTemplateAsync(Arg.Any<string>());

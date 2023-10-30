@@ -42,7 +42,7 @@ public class TodoListService : ITodoListService
         };
     }
 
-    public async Task<UpdateTodoListResponseModel> UpdateAsync(Guid id, UpdateTodoListModel updateTodoListModel)
+    public async Task<UpdateTodoListResponseModel> UpdateAsync(int id, UpdateTodoListModel updateTodoListModel)
     {
         var todoList = await _todoListRepository.GetFirstAsync(tl => tl.Id == id);
 
@@ -59,7 +59,7 @@ public class TodoListService : ITodoListService
         };
     }
 
-    public async Task<BaseResponseModel> DeleteAsync(Guid id)
+    public async Task<BaseResponseModel> DeleteAsync(int id)
     {
         var todoList = await _todoListRepository.GetFirstAsync(tl => tl.Id == id);
 

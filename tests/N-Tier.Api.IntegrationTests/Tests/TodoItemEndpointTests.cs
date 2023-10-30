@@ -37,7 +37,7 @@ public class TodoItemEndpointTests
 
         var user = await context.Users.Where(u => u.Email == UserConstants.DefaultUserDb.Email).FirstOrDefaultAsync();
 
-        var todoListFromDatabase = Builder<TodoList>.CreateNew().With(tl => tl.Id = Guid.NewGuid())
+        var todoListFromDatabase = Builder<TodoList>.CreateNew().With(tl => tl.Id = 0)
             .With(tl => tl.CreatedBy = user.Id).Build();
 
         await context.TodoLists.AddAsync(todoListFromDatabase);
@@ -68,7 +68,7 @@ public class TodoItemEndpointTests
         // Arrange
         var client = await _factory.CreateDefaultClientAsync();
 
-        var createTodoItemModel = Builder<CreateTodoItemModel>.CreateNew().With(cti => cti.TodoListId = Guid.NewGuid())
+        var createTodoItemModel = Builder<CreateTodoItemModel>.CreateNew().With(cti => cti.TodoListId = 0)
             .Build();
 
         // Act
@@ -89,10 +89,10 @@ public class TodoItemEndpointTests
     
         var user = await context.Users.Where(u => u.Email == UserConstants.DefaultUserDb.Email).FirstOrDefaultAsync();
     
-        var todoListFromDatabase = Builder<TodoList>.CreateNew().With(tl => tl.Id = Guid.NewGuid())
+        var todoListFromDatabase = Builder<TodoList>.CreateNew().With(tl => tl.Id = 0)
             .With(tl => tl.CreatedBy = user.Id).Build();
     
-        var todoItemFromDatabase = Builder<TodoItem>.CreateNew().With(ti => ti.Id = Guid.NewGuid())
+        var todoItemFromDatabase = Builder<TodoItem>.CreateNew().With(ti => ti.Id = 0)
             .With(ti => ti.CreatedBy = user.Id).Build();
     
         todoListFromDatabase.Items.Add(todoItemFromDatabase);
@@ -132,7 +132,7 @@ public class TodoItemEndpointTests
 
         // Act
         var apiResponse =
-            await client.PutAsync($"/api/todoItems/{Guid.NewGuid()}", new JsonContent(updateTodoItemModel));
+            await client.PutAsync($"/api/todoItems/{0}", new JsonContent(updateTodoItemModel));
 
         // Assert
         var response = JsonConvert.DeserializeObject<ApiResult<string>>(await apiResponse.Content.ReadAsStringAsync());
@@ -149,7 +149,7 @@ public class TodoItemEndpointTests
 
         var user = await context.Users.Where(u => u.Email == UserConstants.DefaultUserDb.Email).FirstOrDefaultAsync();
 
-        var todoListFromDatabase = Builder<TodoList>.CreateNew().With(tl => tl.Id = Guid.NewGuid())
+        var todoListFromDatabase = Builder<TodoList>.CreateNew().With(tl => tl.Id = 0)
             .With(tl => tl.CreatedBy = user.Id).Build();
 
         await context.TodoLists.AddAsync(todoListFromDatabase);
@@ -161,7 +161,7 @@ public class TodoItemEndpointTests
 
         // Act
         var apiResponse =
-            await client.PutAsync($"/api/todoItems/{Guid.NewGuid()}", new JsonContent(updateTodoItemModel));
+            await client.PutAsync($"/api/todoItems/{0}", new JsonContent(updateTodoItemModel));
 
         // Assert
         var response = JsonConvert.DeserializeObject<ApiResult<string>>(await apiResponse.Content.ReadAsStringAsync());
@@ -178,10 +178,10 @@ public class TodoItemEndpointTests
 
         var user = await context.Users.Where(u => u.Email == UserConstants.DefaultUserDb.Email).FirstOrDefaultAsync();
 
-        var todoItemFromDatabase = Builder<TodoItem>.CreateNew().With(ti => ti.Id = Guid.NewGuid())
+        var todoItemFromDatabase = Builder<TodoItem>.CreateNew().With(ti => ti.Id = 0)
             .With(ti => ti.CreatedBy = user.Id).Build();
 
-        var todoListFromDatabase = Builder<TodoList>.CreateNew().With(tl => tl.Id = Guid.NewGuid())
+        var todoListFromDatabase = Builder<TodoList>.CreateNew().With(tl => tl.Id = 0)
             .With(tl => tl.CreatedBy = user.Id).Build();
 
         todoListFromDatabase.Items.Add(todoItemFromDatabase);
@@ -209,7 +209,7 @@ public class TodoItemEndpointTests
         var client = await _factory.CreateDefaultClientAsync();
 
         // Act
-        var apiResponse = await client.DeleteAsync($"/api/todoItems/{Guid.NewGuid()}");
+        var apiResponse = await client.DeleteAsync($"/api/todoItems/{0}");
 
         // Assert
         var response = JsonConvert.DeserializeObject<ApiResult<string>>(await apiResponse.Content.ReadAsStringAsync());
@@ -226,19 +226,19 @@ public class TodoItemEndpointTests
 
         var user = await context.Users.Where(u => u.Email == UserConstants.DefaultUserDb.Email).FirstOrDefaultAsync();
 
-        var todoListFromDatabase = Builder<TodoList>.CreateNew().With(tl => tl.Id = Guid.NewGuid())
+        var todoListFromDatabase = Builder<TodoList>.CreateNew().With(tl => tl.Id = 0)
             .With(tl => tl.CreatedBy = user.Id).Build();
 
         todoListFromDatabase.Items.AddRange(Builder<TodoItem>.CreateListOfSize(25).All()
-            .With(ti => ti.Id = Guid.NewGuid()).Build());
+            .With(ti => ti.Id = 0).Build());
 
         var todoListFromAnotherUsers = Builder<TodoList>.CreateListOfSize(10).All()
-            .With(tl => tl.Id = Guid.NewGuid())
-            .With(tl => tl.CreatedBy = Guid.NewGuid().ToString())
+            .With(tl => tl.Id = 0)
+            .With(tl => tl.CreatedBy = 0.ToString())
             .Build();
 
         foreach (var todoList in todoListFromAnotherUsers)
-            todoList.Items.AddRange(Builder<TodoItem>.CreateListOfSize(10).All().With(ti => ti.Id = Guid.NewGuid())
+            todoList.Items.AddRange(Builder<TodoItem>.CreateListOfSize(10).All().With(ti => ti.Id = 0)
                 .Build());
 
         await context.TodoLists.AddAsync(todoListFromDatabase);

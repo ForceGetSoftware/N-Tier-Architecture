@@ -237,7 +237,7 @@ public class UsersEndpointTests
             .Build();
 
         // Act
-        var apiResponse = await client.PutAsync($"/api/users/{Guid.NewGuid()}/changePassword",
+        var apiResponse = await client.PutAsync($"/api/users/{0}/changePassword",
             new JsonContent(changePasswordModel));
 
         // Assert
@@ -332,6 +332,6 @@ public class UsersEndpointTests
         apiResponse.StatusCode.Should().Be(HttpStatusCode.OK);
         var response = await ResponseHelper.GetApiResultAsync<BaseResponseModel>(apiResponse);
         CheckResponse.Succeeded(response);
-        response.Result.Id.Should().Be(user.Id);
+        response.Result.Id.Should().Be(int.Parse(user.Id));
     }
 }

@@ -7,9 +7,9 @@ public interface ITodoListService
 {
     Task<CreateTodoListResponseModel> CreateAsync(CreateTodoListModel createTodoListModel);
 
-    Task<BaseResponseModel> DeleteAsync(Guid id);
+    Task<BaseResponseModel> DeleteAsync(int id);
 
     Task<IEnumerable<TodoListResponseModel>> GetAllAsync();
 
-    Task<UpdateTodoListResponseModel> UpdateAsync(Guid id, UpdateTodoListModel updateTodoListModel);
+    Task<UpdateTodoListResponseModel> UpdateAsync(int id, UpdateTodoListModel updateTodoListModel);
 }

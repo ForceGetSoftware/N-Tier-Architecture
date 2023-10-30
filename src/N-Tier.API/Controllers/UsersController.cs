@@ -36,8 +36,8 @@ public class UsersController : ApiController
             await _userService.ConfirmEmailAsync(confirmEmailModel)));
     }
 
-    [HttpPut("{id:guid}/changePassword")]
-    public async Task<IActionResult> ChangePassword(Guid id, ChangePasswordModel changePasswordModel)
+    [HttpPut("{id:int}/changePassword")]
+    public async Task<IActionResult> ChangePassword(int id, ChangePasswordModel changePasswordModel)
     {
         return Ok(ApiResult<BaseResponseModel>.Success(
             await _userService.ChangePasswordAsync(id, changePasswordModel)));

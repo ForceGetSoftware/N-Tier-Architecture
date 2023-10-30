@@ -23,15 +23,15 @@ public class TodoItemsController : ApiController
             await _todoItemService.CreateAsync(createTodoItemModel)));
     }
 
-    [HttpPut("{id:guid}")]
-    public async Task<IActionResult> UpdateAsync(Guid id, UpdateTodoItemModel updateTodoItemModel)
+    [HttpPut("{id:int}")]
+    public async Task<IActionResult> UpdateAsync(int id, UpdateTodoItemModel updateTodoItemModel)
     {
         return Ok(ApiResult<UpdateTodoItemResponseModel>.Success(
             await _todoItemService.UpdateAsync(id, updateTodoItemModel)));
     }
 
-    [HttpDelete("{id:guid}")]
-    public async Task<IActionResult> DeleteAsync(Guid id)
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> DeleteAsync(int id)
     {
         return Ok(ApiResult<BaseResponseModel>.Success(await _todoItemService.DeleteAsync(id)));
     }

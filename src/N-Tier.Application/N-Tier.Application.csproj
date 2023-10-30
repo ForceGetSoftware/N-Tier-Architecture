@@ -12,10 +12,11 @@
         <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
         <PackageReference Include="MailKit" Version="4.2.0" />
         <PackageReference Include="MimeKit" Version="4.2.0" />
+        <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.0.3" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\N-Tier.DataAccess\N-Tier.DataAccess.csproj"/>
+        <ProjectReference Include="..\N-Tier.DataAccess\N-Tier.DataAccess.csproj" />
     </ItemGroup>
 
 </Project>

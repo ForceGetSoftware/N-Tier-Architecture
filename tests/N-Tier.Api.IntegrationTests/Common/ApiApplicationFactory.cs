@@ -16,7 +16,7 @@ namespace N_Tier.Api.IntegrationTests.Common;
 
 public class ApiApplicationFactory<TProgram> : WebApplicationFactory<TProgram> where TProgram : class
 {
-    private readonly string _inMemoryDatabaseName = Guid.NewGuid().ToString().Replace("-", string.Empty);
+    private readonly string _inMemoryDatabaseName = 0.ToString().Replace("-", string.Empty);
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {

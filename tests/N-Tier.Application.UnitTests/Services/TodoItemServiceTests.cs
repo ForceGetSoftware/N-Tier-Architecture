@@ -30,7 +30,7 @@ public class TodoItemServiceTests : BaseServiceTestConfiguration
         TodoItemRepository.GetAllAsync(Arg.Any<Expression<Func<TodoItem, bool>>>()).Returns(todoItems);
 
         // Act
-        var result = await _sut.GetAllByListIdAsync(Guid.NewGuid());
+        var result = await _sut.GetAllByListIdAsync(0);
 
         // Assert
         result.Should().HaveCount(10);
@@ -43,7 +43,7 @@ public class TodoItemServiceTests : BaseServiceTestConfiguration
         // Arrange
         var createTodoItemModel = Builder<CreateTodoItemModel>.CreateNew().Build();
         var todoList = Builder<TodoList>.CreateNew().Build();
-        var todoItem = Builder<TodoItem>.CreateNew().With(ti => ti.Id = Guid.NewGuid()).Build();
+        var todoItem = Builder<TodoItem>.CreateNew().With(ti => ti.Id = 0).Build();
 
         TodoListRepository.GetFirstAsync(Arg.Any<Expression<Func<TodoList, bool>>>()).Returns(todoList);
         TodoItemRepository.AddAsync(Arg.Any<TodoItem>()).Returns(todoItem);
@@ -61,12 +61,12 @@ public class TodoItemServiceTests : BaseServiceTestConfiguration
     public async Task DeleteAsync_Should_Delete_Entity_From_Database()
     {
         // Arrange
-        var todoItem = Builder<TodoItem>.CreateNew().With(c => c.Id = Guid.NewGuid()).Build();
+        var todoItem = Builder<TodoItem>.CreateNew().With(c => c.Id = 0).Build();
         TodoItemRepository.GetFirstAsync(Arg.Any<Expression<Func<TodoItem, bool>>>()).Returns(todoItem);
         TodoItemRepository.DeleteAsync(Arg.Any<TodoItem>()).Returns(todoItem);
 
         // Act
-        var result = await _sut.DeleteAsync(Guid.NewGuid());
+        var result = await _sut.DeleteAsync(0);
 
         // Assert
         result.Id.Should().Be(todoItem.Id);

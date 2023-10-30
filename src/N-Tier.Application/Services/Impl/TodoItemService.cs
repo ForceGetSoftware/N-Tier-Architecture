@@ -21,7 +21,7 @@ public class TodoItemService : ITodoItemService
         _mapper = mapper;
     }
 
-    public async Task<IEnumerable<TodoItemResponseModel>> GetAllByListIdAsync(Guid id,
+    public async Task<IEnumerable<TodoItemResponseModel>> GetAllByListIdAsync(int id,
         CancellationToken cancellationToken = default)
     {
         var todoItems = await _todoItemRepository.GetAllAsync(ti => ti.List.Id == id);
@@ -43,7 +43,7 @@ public class TodoItemService : ITodoItemService
         };
     }
 
-    public async Task<UpdateTodoItemResponseModel> UpdateAsync(Guid id, UpdateTodoItemModel updateTodoItemModel,
+    public async Task<UpdateTodoItemResponseModel> UpdateAsync(int id, UpdateTodoItemModel updateTodoItemModel,
         CancellationToken cancellationToken = default)
     {
         var todoItem = await _todoItemRepository.GetFirstAsync(ti => ti.Id == id);
@@ -56,7 +56,7 @@ public class TodoItemService : ITodoItemService
         };
     }
 
-    public async Task<BaseResponseModel> DeleteAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<BaseResponseModel> DeleteAsync(int id, CancellationToken cancellationToken = default)
     {
         var todoItem = await _todoItemRepository.GetFirstAsync(ti => ti.Id == id);
 

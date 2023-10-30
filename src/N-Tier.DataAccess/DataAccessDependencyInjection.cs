@@ -41,7 +41,7 @@ public static class DataAccessDependencyInjection
             });
         else
             services.AddDbContext<DatabaseContext>(options =>
-                options.UseSqlServer(databaseConfig.ConnectionString,
+                options.UseMySQL(databaseConfig.ConnectionString,
                     opt => opt.MigrationsAssembly(typeof(DatabaseContext).Assembly.FullName)));
     }
 

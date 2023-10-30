@@ -25,8 +25,8 @@ public class TodoListsController : ApiController
         return Ok(ApiResult<IEnumerable<TodoListResponseModel>>.Success(await _todoListService.GetAllAsync()));
     }
 
-    [HttpGet("{id:guid}/todoItems")]
-    public async Task<IActionResult> GetAllTodoItemsAsync(Guid id)
+    [HttpGet("{id:int}/todoItems")]
+    public async Task<IActionResult> GetAllTodoItemsAsync(int id)
     {
         return Ok(ApiResult<IEnumerable<TodoItemResponseModel>>.Success(
             await _todoItemService.GetAllByListIdAsync(id)));
@@ -39,15 +39,15 @@ public class TodoListsController : ApiController
             await _todoListService.CreateAsync(createTodoListModel)));
     }
 
-    [HttpPut("{id:guid}")]
-    public async Task<IActionResult> UpdateAsync(Guid id, UpdateTodoListModel updateTodoListModel)
+    [HttpPut("{id:int}")]
+    public async Task<IActionResult> UpdateAsync(int id, UpdateTodoListModel updateTodoListModel)
     {
         return Ok(ApiResult<UpdateTodoListResponseModel>.Success(
             await _todoListService.UpdateAsync(id, updateTodoListModel)));
     }
 
-    [HttpDelete("{id:guid}")]
-    public async Task<IActionResult> DeleteAsync(Guid id)
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> DeleteAsync(int id)
     {
         return Ok(ApiResult<BaseResponseModel>.Success(await _todoListService.DeleteAsync(id)));
     }

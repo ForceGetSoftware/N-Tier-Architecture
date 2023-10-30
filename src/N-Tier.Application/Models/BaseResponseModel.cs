@@ -2,5 +2,5 @@
 
 public class BaseResponseModel
 {
-    public Guid Id { get; set; }
+    public int Id { get; set; }
 }

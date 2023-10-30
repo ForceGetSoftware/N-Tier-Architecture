@@ -2,7 +2,7 @@
 
 public class CreateTodoItemModel
 {
-    public Guid TodoListId { get; set; }
+    public int TodoListId { get; set; }
 
     public string Title { get; set; }
 

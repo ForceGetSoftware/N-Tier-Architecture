@@ -55,7 +55,7 @@ public class UserService : IUserService
 
         return new CreateUserResponseModel
         {
-            Id = Guid.Parse((await _userManager.FindByNameAsync(user.UserName)).Id)
+            Id = int.Parse((await _userManager.FindByNameAsync(user.UserName)).Id)
         };
     }
 
@@ -99,7 +99,7 @@ public class UserService : IUserService
         };
     }
 
-    public async Task<BaseResponseModel> ChangePasswordAsync(Guid userId, ChangePasswordModel changePasswordModel)
+    public async Task<BaseResponseModel> ChangePasswordAsync(int userId, ChangePasswordModel changePasswordModel)
     {
         var user = await _userManager.FindByIdAsync(userId.ToString());
 
@@ -115,7 +115,7 @@ public class UserService : IUserService
 
         return new BaseResponseModel
         {
-            Id = Guid.Parse(user.Id)
+            Id = int.Parse(user.Id)
         };
     }
 }

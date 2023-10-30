@@ -82,7 +82,7 @@ public class TodoListEndpointTests
         var user = await context.Users.Where(u => u.Email == UserConstants.DefaultUserDb.Email).FirstOrDefaultAsync();
 
         var todoList = Builder<TodoList>.CreateNew()
-            .With(tl => tl.Id = Guid.NewGuid())
+            .With(tl => tl.Id = 0)
             .With(tl => tl.CreatedBy = user.Id)
             .Build();
 
@@ -120,7 +120,7 @@ public class TodoListEndpointTests
 
         // Act
         var apiResponse =
-            await client.PutAsync($"/api/todoLists/{Guid.NewGuid()}", new JsonContent(updateTodoListModel));
+            await client.PutAsync($"/api/todoLists/{0}", new JsonContent(updateTodoListModel));
 
         // Assert
         var response = await ResponseHelper.GetApiResultAsync<string>(apiResponse);
@@ -140,7 +140,7 @@ public class TodoListEndpointTests
         var context = _factory.GetRequiredService<DatabaseContext>();
 
         var todoList = Builder<TodoList>.CreateNew()
-            .With(tl => tl.Id = Guid.NewGuid())
+            .With(tl => tl.Id = 0)
             .Build();
 
         var todoListFromDatabase = (await context.TodoLists.AddAsync(todoList)).Entity;
@@ -173,7 +173,7 @@ public class TodoListEndpointTests
         var user = await context.Users.Where(u => u.Email == "nuyonu@gmail.com").FirstOrDefaultAsync();
 
         var todoList = Builder<TodoList>.CreateNew()
-            .With(tl => tl.Id = Guid.NewGuid())
+            .With(tl => tl.Id = 0)
             .With(tl => tl.CreatedBy = user.Id)
             .Build();
 
@@ -197,7 +197,7 @@ public class TodoListEndpointTests
     {
         // Arrange
         var client = await _factory.CreateDefaultClientAsync();
-        var randomId = Guid.NewGuid();
+        var randomId = 0;
 
         // Act
         var apiResponse = await client.DeleteAsync($"/api/todoLists/{randomId}");
@@ -221,13 +221,13 @@ public class TodoListEndpointTests
         context.TodoLists.RemoveRange(context.TodoLists.ToList());
 
         var todoLists = Builder<TodoList>.CreateListOfSize(10).All()
-            .With(tl => tl.Id = Guid.NewGuid())
+            .With(tl => tl.Id = 0)
             .With(tl => tl.CreatedBy = user.Id)
             .Build();
 
         var todoListsNotBelongToTheUser = Builder<TodoList>.CreateListOfSize(10).All()
-            .With(tl => tl.Id = Guid.NewGuid())
-            .With(tl => tl.CreatedBy = Guid.NewGuid().ToString())
+            .With(tl => tl.Id = 0)
+            .With(tl => tl.CreatedBy = 0.ToString())
             .Build();
 
         await context.TodoLists.AddRangeAsync(todoLists);
