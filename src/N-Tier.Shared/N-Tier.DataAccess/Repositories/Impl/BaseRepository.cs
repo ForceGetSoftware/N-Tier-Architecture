@@ -16,7 +16,10 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
         Context = context;
         DbSet = context.Set<TEntity>();
     }
-
+    public IQueryable<TEntity> AsQueryable()
+    {
+        return DbSet.AsQueryable();
+    }
     public async Task<TEntity> AddAsync(TEntity entity)
     {
         var addedEntity = (await DbSet.AddAsync(entity)).Entity;
