@@ -1,4 +1,4 @@
-# **N-Tier Architecture**
+# **N-Tier**
 
 ![Build Status](https://dev.azure.com/nuyonu/N-Tier-Architecture/_apis/build/status/nuyonu.N-Tier-Architecture?branchName=master) 
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=nuyonu_N-Tier-Architecture&metric=alert_status)](https://sonarcloud.io/dashboard?id=nuyonu_N-Tier-Architecture)

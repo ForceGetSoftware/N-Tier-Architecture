@@ -6,4 +6,8 @@
         <RootNamespace>N_Tier.Core</RootNamespace>
     </PropertyGroup>
 
+    <ItemGroup>
+      <PackageReference Include="N-Tier.Shared" Version="7.0.0" />
+    </ItemGroup>
+
 </Project>

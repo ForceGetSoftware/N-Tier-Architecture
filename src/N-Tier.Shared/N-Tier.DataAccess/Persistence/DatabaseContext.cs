@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using N_Tier.Core.Common;
-using N_Tier.Core.Entities;
 using N_Tier.DataAccess.Identity;
 using N_Tier.Shared.Services;
 
@@ -17,9 +16,6 @@ public class DatabaseContext : IdentityDbContext<ApplicationUser>
         _claimService = claimService;
     }
 
-    public DbSet<TodoItem> TodoItems { get; set; }
-
-    public DbSet<TodoList> TodoLists { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

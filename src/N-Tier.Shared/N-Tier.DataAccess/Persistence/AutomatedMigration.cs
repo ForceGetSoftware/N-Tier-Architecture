@@ -16,6 +16,5 @@ public static class AutomatedMigration
 
         var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
 
-        await DatabaseContextSeed.SeedDatabaseAsync(context, userManager);
     }
 }

@@ -5,7 +5,7 @@ using N_Tier.DataAccess.Identity;
 
 namespace N_Tier.Application.Models.Validators.User;
 
-public class CreateUserModelValidator : AbstractValidator<CreateUserModel>
+public class CreateUserModelValidator : AbstractValidator<CreateUserModel>, IValidationsMarker
 {
     private readonly UserManager<ApplicationUser> _userManager;
 

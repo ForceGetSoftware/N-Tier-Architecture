@@ -20,11 +20,12 @@ builder.Services.AddValidatorsFromAssemblyContaining(typeof(IValidationsMarker))
 builder.Services.AddSwagger();
 
 builder.Services.AddDataAccess(builder.Configuration)
-    .AddApplication(builder.Environment);
+    .AddApplication()
+    .AddServices(builder.Environment)
+    .AddForcegetRabbitMQ()
+    .AddForcegetBaseLogging(builder.Configuration, "N-Tier");
 
 builder.Services.AddJwt(builder.Configuration);
-
-builder.Services.AddEmailConfiguration(builder.Configuration);
 
 var app = builder.Build();
 
@@ -49,11 +50,13 @@ app.UseAuthentication();
 
 app.UseAuthorization();
 
-app.UseMiddleware<PerformanceMiddleware>();
+// app.UseMiddleware<PerformanceMiddleware>();
 
 app.UseMiddleware<TransactionMiddleware>();
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
+
+app.UseMiddleware<SerilogMiddleware>();
 
 app.MapControllers();
 
