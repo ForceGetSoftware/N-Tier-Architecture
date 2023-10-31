@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using N_Tier.Core.Entities;
 using N_Tier.Shared.Services;
 
 namespace N_Tier.DataAccess.Persistence;
@@ -11,4 +12,7 @@ public class AppDatabaseContext : DatabaseContext
     {
         _claimService = claimService;
     }
+
+    public DbSet<TodoItem> TodoItems {get;set;}
+    public DbSet<TodoList> TodoLists {get;set;}
 }

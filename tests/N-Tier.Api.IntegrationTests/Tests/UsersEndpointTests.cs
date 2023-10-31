@@ -30,7 +30,7 @@ public class UsersEndpointTests
     {
         // Arrange
         var client = await _factory.CreateDefaultClientAsync();
-        var context = _factory.GetRequiredService<DatabaseContext>();
+        var context = _factory.GetRequiredService<AppDatabaseContext>();
 
         var createModel = Builder<CreateUserModel>.CreateNew()
             .With(cu => cu.Email = "IntegrationTest@gmail.com")
@@ -169,7 +169,7 @@ public class UsersEndpointTests
     {
         // Arrange
         var client = await _factory.CreateDefaultClientAsync();
-        var context = _factory.GetRequiredService<DatabaseContext>();
+        var context = _factory.GetRequiredService<AppDatabaseContext>();
         var user = Builder<ApplicationUser>.CreateNew()
             .With(u => u.UserName = "ConfirmEmailUser")
             .With(u => u.Email = "ConfirmEmailUser@email.com")

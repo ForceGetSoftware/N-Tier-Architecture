@@ -6,7 +6,6 @@ COPY src/N-Tier.API/*.csproj ./src/N-Tier.API/
 COPY src/N-Tier.Application/*.csproj ./src/N-Tier.Application/
 COPY src/N-Tier.Core/*.csproj ./src/N-Tier.Core/
 COPY src/N-Tier.DataAccess/*.csproj ./src/N-Tier.DataAccess/
-COPY src/N-Tier.Shared/*.csproj ./src/N-Tier.Shared/
 
 WORKDIR /app/src/N-Tier.API
 RUN dotnet restore

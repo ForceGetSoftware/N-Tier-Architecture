@@ -31,7 +31,7 @@ public class TodoListEndpointTests
     {
         // Arrange
         var client = await _factory.CreateDefaultClientAsync();
-        var context = _factory.GetRequiredService<DatabaseContext>();
+        var context = _factory.GetRequiredService<AppDatabaseContext>();
 
         var createTodoListModel = Builder<CreateTodoListModel>.CreateNew()
             .Build();
@@ -53,7 +53,7 @@ public class TodoListEndpointTests
     {
         // Arrange
         var client = await _factory.CreateDefaultClientAsync();
-        var context = _factory.GetRequiredService<DatabaseContext>();
+        var context = _factory.GetRequiredService<AppDatabaseContext>();
 
         var createTodoListModel = Builder<CreateTodoListModel>.CreateNew()
             .With(ctl => ctl.Title = "1")
@@ -76,7 +76,7 @@ public class TodoListEndpointTests
     {
         // Arrange
         var client = await _factory.CreateDefaultClientAsync();
-        var context = _factory.GetRequiredService<DatabaseContext>();
+        var context = _factory.GetRequiredService<AppDatabaseContext>();
 
         var user = await context.Users.Where(u => u.Email == UserConstants.DefaultUserDb.Email).FirstOrDefaultAsync();
 
@@ -97,7 +97,7 @@ public class TodoListEndpointTests
             new JsonContent(updateTodoListModel));
 
         // Assert
-        context = _factory.GetRequiredService<DatabaseContext>();
+        context = _factory.GetRequiredService<AppDatabaseContext>();
         var response = await ResponseHelper.GetApiResultAsync<UpdateTodoListResponseModel>(apiResponse);
         var updatedTodoListFromDatabase = await context.TodoLists
             .Where(tl => tl.Id == response.Result.Id)
@@ -112,7 +112,7 @@ public class TodoListEndpointTests
     {
         // Arrange
         var client = await _factory.CreateDefaultClientAsync();
-        var context = _factory.GetRequiredService<DatabaseContext>();
+        var context = _factory.GetRequiredService<AppDatabaseContext>();
 
         var updateTodoListModel = Builder<UpdateTodoListModel>.CreateNew()
             .With(utl => utl.Title = "UpdateTodoListIntegration").Build();
@@ -136,7 +136,7 @@ public class TodoListEndpointTests
     {
         // Arrange
         var client = await _factory.CreateDefaultClientAsync();
-        var context = _factory.GetRequiredService<DatabaseContext>();
+        var context = _factory.GetRequiredService<AppDatabaseContext>();
 
         var todoList = Builder<TodoList>.CreateNew()
             .With(tl => tl.Id = 0)
@@ -167,7 +167,7 @@ public class TodoListEndpointTests
     {
         // Arrange
         var client = await _factory.CreateDefaultClientAsync();
-        var context = _factory.GetRequiredService<DatabaseContext>();
+        var context = _factory.GetRequiredService<AppDatabaseContext>();
 
         var user = await context.Users.Where(u => u.Email == "nuyonu@gmail.com").FirstOrDefaultAsync();
 
@@ -212,7 +212,7 @@ public class TodoListEndpointTests
     {
         // Arrange
         var client = await _factory.CreateDefaultClientAsync();
-        var context = _factory.GetRequiredService<DatabaseContext>();
+        var context = _factory.GetRequiredService<AppDatabaseContext>();
 
         var user = await context.Users.Where(u => u.Email == UserConstants.DefaultUserDb.Email)
             .FirstOrDefaultAsync();

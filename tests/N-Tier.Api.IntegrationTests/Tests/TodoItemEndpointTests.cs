@@ -32,7 +32,7 @@ public class TodoItemEndpointTests
     {
         // Arrange
         var client = await _factory.CreateDefaultClientAsync();
-        var context = _factory.GetRequiredService<DatabaseContext>();
+        var context = _factory.GetRequiredService<AppDatabaseContext>();
 
         var user = await context.Users.Where(u => u.Email == UserConstants.DefaultUserDb.Email).FirstOrDefaultAsync();
 
@@ -84,7 +84,7 @@ public class TodoItemEndpointTests
     {
         // Arrange
         var client = await _factory.CreateDefaultClientAsync();
-        var context = _factory.GetRequiredService<DatabaseContext>();
+        var context = _factory.GetRequiredService<AppDatabaseContext>();
     
         var user = await context.Users.Where(u => u.Email == UserConstants.DefaultUserDb.Email).FirstOrDefaultAsync();
     
@@ -110,7 +110,7 @@ public class TodoItemEndpointTests
             new JsonContent(updateTodoItemModel));
     
         // Assert
-        context = _factory.GetRequiredService<DatabaseContext>();
+        context = _factory.GetRequiredService<AppDatabaseContext>();
         var response =
             JsonConvert.DeserializeObject<ApiResult<CreateTodoItemResponseModel>>(
                 await apiResponse.Content.ReadAsStringAsync());
@@ -144,7 +144,7 @@ public class TodoItemEndpointTests
     {
         // Arrange
         var client = await _factory.CreateDefaultClientAsync();
-        var context = _factory.GetRequiredService<DatabaseContext>();
+        var context = _factory.GetRequiredService<AppDatabaseContext>();
 
         var user = await context.Users.Where(u => u.Email == UserConstants.DefaultUserDb.Email).FirstOrDefaultAsync();
 
@@ -173,7 +173,7 @@ public class TodoItemEndpointTests
     {
         // Arrange
         var client = await _factory.CreateDefaultClientAsync();
-        var context = _factory.GetRequiredService<DatabaseContext>();
+        var context = _factory.GetRequiredService<AppDatabaseContext>();
 
         var user = await context.Users.Where(u => u.Email == UserConstants.DefaultUserDb.Email).FirstOrDefaultAsync();
 
@@ -221,7 +221,7 @@ public class TodoItemEndpointTests
     {
         // Arrange
         var client = await _factory.CreateDefaultClientAsync();
-        var context = _factory.GetRequiredService<DatabaseContext>();
+        var context = _factory.GetRequiredService<AppDatabaseContext>();
 
         var user = await context.Users.Where(u => u.Email == UserConstants.DefaultUserDb.Email).FirstOrDefaultAsync();
 

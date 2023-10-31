@@ -15,6 +15,7 @@ public class EmailService : IEmailService
     private async Task SendAsync(MimeMessage message)
     {
         // send rabbitmq
+        await Task.Delay(1);
     }
 
     private MimeMessage CreateEmail(EmailMessage emailMessage)
