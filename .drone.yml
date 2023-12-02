@@ -1,0 +1,13 @@
+kind: pipeline
+name: default
+
+steps:
+
+- name: git-push
+  image: appleboy/drone-git-push
+  settings:
+    branch: ${DRONE_COMMIT_BRANCH}
+    remote: 
+      from_secret: GITURL
+    force: false
+    commit: true
