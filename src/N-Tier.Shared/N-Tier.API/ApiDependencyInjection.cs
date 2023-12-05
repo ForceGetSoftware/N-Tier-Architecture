@@ -34,10 +34,11 @@ public static class ApiDependencyInjection
             });
     }
 
-    public static void AddSwagger(this IServiceCollection services)
+    public static void AddSwagger(this IServiceCollection services, string title, string version)
     {
         services.AddSwaggerGen(s =>
         {
+            s.SwaggerDoc("v1", new OpenApiInfo { Title = title, Version = version });
             s.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
             {
                 Description = "JWT Authorization header using the Bearer scheme (Example: 'Bearer YOUR_TOKEN')",

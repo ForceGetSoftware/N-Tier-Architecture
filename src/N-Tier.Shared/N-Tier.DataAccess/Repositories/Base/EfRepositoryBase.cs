@@ -1,5 +1,9 @@
 ﻿using N_Tier.Core.Common;
 using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using N_Tier.Shared.N_Tier.DataAccess.Dynamic;
+using N_Tier.Shared.N_Tier.DataAccess.Paging;
 
 namespace N_Tier.Shared.N_Tier.DataAccess.Repositories.Base
 {

@@ -5,5 +5,5 @@ namespace N_Tier.DataAccess.Repositories.Impl;
 
 public class TodoItemRepository : BaseRepository<TodoItem>, ITodoItemRepository
 {
-    public TodoItemRepository(DatabaseContext context) : base(context) { }
+    public TodoItemRepository(AppDatabaseContext context) : base(context) { }
 }
