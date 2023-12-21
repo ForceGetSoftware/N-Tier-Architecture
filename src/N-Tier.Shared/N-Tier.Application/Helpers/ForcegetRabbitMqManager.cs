@@ -8,6 +8,7 @@ public interface IForcegetRabbitMqManager
 {
     bool Send(string queue, string message);
 }
+
 public class ForcegetRabbitMqManager : IForcegetRabbitMqManager
 {
     private readonly IConfiguration configuration;
@@ -23,18 +24,18 @@ public class ForcegetRabbitMqManager : IForcegetRabbitMqManager
         using var connection = factory.CreateConnection();
         using var channel = connection.CreateModel();
 
-        channel.QueueDeclare(queue: queue,
-                             durable: false,
-                             exclusive: false,
-                             autoDelete: false,
-                             arguments: null);
+        channel.QueueDeclare(queue,
+            false,
+            false,
+            false,
+            null);
 
         var body = Encoding.UTF8.GetBytes(message);
 
-        channel.BasicPublish(exchange: string.Empty,
-                             routingKey: queue,
-                             basicProperties: null,
-                             body: body);
+        channel.BasicPublish(string.Empty,
+            queue,
+            null,
+            body);
 
         return true;
     }

@@ -2,5 +2,7 @@
 
 public class UnprocessableRequestException : Exception
 {
-    public UnprocessableRequestException(string message) : base(message) { }
+    public UnprocessableRequestException(string message) : base(message)
+    {
+    }
 }

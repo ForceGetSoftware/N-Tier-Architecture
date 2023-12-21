@@ -12,9 +12,9 @@ namespace N_Tier.DataAccess;
 
 public static class DataAccessDependencyInjection
 {
-    public static IServiceCollection AddDataAccess(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddDataAccess(this IServiceCollection services, IConfiguration configuration, string migrationsAssembly)
     {
-        services.AddDatabase(configuration);
+        services.AddDatabase(configuration, migrationsAssembly);
 
         services.AddIdentity();
 
@@ -29,26 +29,26 @@ public static class DataAccessDependencyInjection
         services.AddScoped<ITodoListRepository, TodoListRepository>();
     }
 
-    private static void AddDatabase(this IServiceCollection services, IConfiguration configuration)
+    private static void AddDatabase(this IServiceCollection services, IConfiguration configuration, string migrationsAssembly)
     {
         var databaseConfig = configuration.GetSection("Database").Get<DatabaseConfiguration>();
 
         if (databaseConfig.UseInMemoryDatabase)
-            services.AddDbContext<DatabaseContext>(options =>
+            services.AddDbContext<AppDatabaseContext>(options =>
             {
                 options.UseInMemoryDatabase("NTierDatabase");
                 options.ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning));
             });
         else
-            services.AddDbContext<DatabaseContext>(options =>
+            services.AddDbContext<AppDatabaseContext>(options =>
                 options.UseMySQL(databaseConfig.ConnectionString,
-                    opt => opt.MigrationsAssembly(typeof(DatabaseContext).Assembly.FullName)));
+                    opt => opt.MigrationsAssembly(migrationsAssembly)));
     }
 
     private static void AddIdentity(this IServiceCollection services)
     {
         services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
-            .AddEntityFrameworkStores<DatabaseContext>();
+            .AddEntityFrameworkStores<AppDatabaseContext>();
 
         services.Configure<IdentityOptions>(options =>
         {

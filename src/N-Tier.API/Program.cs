@@ -19,7 +19,7 @@ builder.Services.AddValidatorsFromAssemblyContaining(typeof(IValidationsMarker))
 
 builder.Services.AddSwagger();
 
-builder.Services.AddDataAccess(builder.Configuration)
+builder.Services.AddDataAccess(builder.Configuration, "N-Tier.DataAccess")
     .AddApplication()
     .AddServices(builder.Environment)
     .AddForcegetRabbitMQ()
@@ -31,7 +31,7 @@ var app = builder.Build();
 
 using var scope = app.Services.CreateScope();
 
-await AutomatedMigration.MigrateAsync(scope.ServiceProvider);
+await AutomatedMigration.MigrateAsync<AppDatabaseContext>(scope.ServiceProvider);
 
 app.UseSwagger();
 app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "N-Tier V1"); });

@@ -5,7 +5,7 @@ namespace N_Tier.DataAccess.Persistence;
 
 public static class DatabaseContextSeed
 {
-    public static async Task SeedDatabaseAsync(DatabaseContext context, UserManager<ApplicationUser> userManager)
+    public static async Task SeedDatabaseAsync(AppDatabaseContext context, UserManager<ApplicationUser> userManager)
     {
         if (!userManager.Users.Any())
         {

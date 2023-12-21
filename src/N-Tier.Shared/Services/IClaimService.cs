@@ -1,9 +1,8 @@
-﻿namespace N_Tier.Shared.Services
-{
-    public interface IClaimService
-    {
-        string GetUserId();
+﻿namespace N_Tier.Shared.Services;
 
-        string GetClaim(string key);
-    }
+public interface IClaimService
+{
+    string GetUserId();
+
+    string GetClaim(string key);
 }

@@ -2,7 +2,9 @@
 
 public class ApiResult<T>
 {
-    private ApiResult() { }
+    private ApiResult()
+    {
+    }
 
     private ApiResult(bool succeeded, T result, IEnumerable<string> errors)
     {

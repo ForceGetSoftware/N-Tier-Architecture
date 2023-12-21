@@ -5,5 +5,5 @@ namespace N_Tier.DataAccess.Repositories.Impl;
 
 public class TodoListRepository : BaseRepository<TodoList>, ITodoListRepository
 {
-    public TodoListRepository(DatabaseContext context) : base(context) { }
+    public TodoListRepository(AppDatabaseContext context) : base(context) { }
 }

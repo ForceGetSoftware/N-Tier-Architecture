@@ -19,5 +19,7 @@ namespace N_Tier.Core.Entities
         public string UpdatedBy { get; set; }
 
         public DateTime? UpdatedOn { get; set; }
+        public int Id { get; set; }
+
     }
 }
