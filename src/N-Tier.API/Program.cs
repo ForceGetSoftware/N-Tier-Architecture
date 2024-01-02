@@ -1,14 +1,17 @@
-using FluentValidation;
+﻿using FluentValidation;
 using FluentValidation.AspNetCore;
 using N_Tier.API;
 using N_Tier.API.Filters;
 using N_Tier.API.Middleware;
+using N_Tier.API.Models;
 using N_Tier.Application;
 using N_Tier.Application.Models.Validators;
 using N_Tier.DataAccess;
 using N_Tier.DataAccess.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.Configure<Settings>(builder.Configuration.GetSection("Mongo"));
 
 builder.Services.AddControllers(
     config => config.Filters.Add(typeof(ValidateModelAttribute))

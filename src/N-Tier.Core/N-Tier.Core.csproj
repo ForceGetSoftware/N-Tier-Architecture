@@ -8,6 +8,7 @@
 
     <ItemGroup>
       <PackageReference Include="ForcegetApplicationBase.Core" Version="7.0.7" />
+      <PackageReference Include="MongoDB.Driver" Version="2.23.1" />
     </ItemGroup>
 
 </Project>
