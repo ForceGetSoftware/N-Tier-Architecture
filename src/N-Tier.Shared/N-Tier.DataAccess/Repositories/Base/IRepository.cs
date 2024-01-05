@@ -3,10 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using Microsoft.EntityFrameworkCore.Query;
-using N_Tier.Shared.N_Tier.DataAccess.Dynamic;
-using N_Tier.Shared.N_Tier.DataAccess.Paging;
-
 namespace N_Tier.Shared.N_Tier.DataAccess.Repositories.Base
 {
     public interface IRepository<TEntity> : IQuery<TEntity>
