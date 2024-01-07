@@ -10,7 +10,8 @@ public interface IForcegetMongoRepository<T>
     IFindFluent<History<T>, History<T>> AsQuery(Expression<Func<History<T>, bool>> filter);
     Task<List<History<T>>> GetAllAsync();
     Task<List<History<T>>> GetAllAsync(Expression<Func<History<T>, bool>> filter);
-    Task<History<T?>> GetAsync(string primaryRefId);
+    Task<History<T>?> GetAsync(string primaryRefId);
+    Task<History<T>?> GetLatestAsync(string primaryRefId);
     Task CreateAsync(History<T> item);
     Task UpdateAsync(string primaryRefId, History<T> item);
     Task RemoveAsync(string primaryRefId);
