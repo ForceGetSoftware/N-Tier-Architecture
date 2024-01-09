@@ -1,6 +1,6 @@
 ﻿namespace Forceget.Enums
 {
-    public enum EuDataStatus
+    public enum EDataStatus
     {
         Deleted = 1,
         Active = 0,

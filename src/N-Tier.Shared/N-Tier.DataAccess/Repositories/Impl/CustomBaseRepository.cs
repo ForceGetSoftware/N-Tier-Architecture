@@ -40,7 +40,7 @@ namespace N_Tier.DataAccess.Repositories.Impl
         public async Task<TEntity> DeleteAsync(TEntity entity)
         {
             entity.DeletedOn = DateTime.Now;
-            entity.DataStatus = EuDataStatus.Deleted;
+            entity.DataStatus = EDataStatus.Deleted;
             var removedEntity = this._dbSet.Remove(entity).Entity;
             var num = await this._context.SaveChangesAsync();
             var entity1 = removedEntity;
@@ -68,7 +68,7 @@ namespace N_Tier.DataAccess.Repositories.Impl
             GetByRefIdCompiled =
                 EF.CompileAsyncQuery((DbContext context, Guid refId) =>
                     context.Set<TEntity>()
-                        .SingleOrDefault(x => x.RefId == refId && x.DataStatus == EuDataStatus.Active));
+                        .SingleOrDefault(x => x.RefId == refId && x.DataStatus == EDataStatus.Active));
 
         public async Task<TEntity> GetByRefIdAsync(Guid refId)
         {

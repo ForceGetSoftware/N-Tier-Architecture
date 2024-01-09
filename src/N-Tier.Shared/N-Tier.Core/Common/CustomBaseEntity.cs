@@ -18,5 +18,5 @@ public abstract class CustomBaseEntity
     [MaxLength(36)]
     public string DeletedBy { get; set; }
     public DateTime? DeletedOn { get; set; }
-    public EuDataStatus DataStatus { get; set; } = EuDataStatus.Active;
+    public EDataStatus DataStatus { get; set; } = EDataStatus.Active;
 }
