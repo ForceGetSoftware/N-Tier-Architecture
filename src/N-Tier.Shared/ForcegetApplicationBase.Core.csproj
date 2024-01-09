@@ -9,7 +9,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Forceget.Enums" Version="8.0.2-test"/>
         <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0"/>
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.14" />
         <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="8.0.0"/>

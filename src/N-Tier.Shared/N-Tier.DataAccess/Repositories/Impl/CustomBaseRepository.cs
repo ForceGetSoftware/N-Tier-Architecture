@@ -21,7 +21,7 @@ namespace N_Tier.DataAccess.Repositories.Impl
         {
             _context = context;
             _dbSet = context.Set<TEntity>();
-            _mongoCollection = client.GetDatabase("Forceget").GetCollection<History<TEntity>>(typeof TEntity.Name);
+            _mongoCollection = client.GetDatabase("Forceget").GetCollection<History<TEntity>>(typeof(TEntity).Name);
         }
 
         public IQueryable<TEntity> AsQueryable() => this._dbSet.AsQueryable();
@@ -86,7 +86,7 @@ namespace N_Tier.DataAccess.Repositories.Impl
         public async Task<List<History<TEntity>>> GetAllHistoryAsync(
             Expression<Func<History<TEntity>, bool>> filter = null)
         {
-            return await _mongoCollection.Find(filter ?? (u => true)).ToListAsync<History<TEntity>>>();
+            return await _mongoCollection.Find(filter ?? (u => true)).ToListAsync();
         }
 
         public async Task<History<TEntity>> CreateHistoryAsync(History<TEntity> entity)
