@@ -20,7 +20,7 @@ public interface ICustomBaseRepository<TEntity> where TEntity : CustomBaseEntity
 
     Task<TEntity> DeleteAsync(TEntity entity);
     
-    Task<IEnumerable<History<TEntity>>> GetAllHistoryAsync(
+    Task<List<History<TEntity>>> GetAllHistoryAsync(
         Expression<Func<History<TEntity>, bool>> filter = null);
     
     Task<TEntity> GetByRefIdAsync(Guid refId);

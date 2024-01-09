@@ -21,13 +21,15 @@ namespace N_Tier.DataAccess.Repositories.Impl
         {
             _context = context;
             _dbSet = context.Set<TEntity>();
-            _mongoCollection = client.GetDatabase("Forceget").GetCollection<History<TEntity>>(nameof(TEntity));
+            _mongoCollection = client.GetDatabase("Forceget").GetCollection<History<TEntity>>(typeof TEntity.Name);
         }
 
         public IQueryable<TEntity> AsQueryable() => this._dbSet.AsQueryable();
 
         public async Task<TEntity> AddAsync(TEntity entity)
         {
+            entity.RefId = Guid.NewGuid();
+            entity.CreatedOn = DateTime.Now;
             var addedEntity = (await this._dbSet.AddAsync(entity)).Entity;
             var num = await this._context.SaveChangesAsync();
             var entity1 = addedEntity;
@@ -37,6 +39,8 @@ namespace N_Tier.DataAccess.Repositories.Impl
 
         public async Task<TEntity> DeleteAsync(TEntity entity)
         {
+            entity.DeletedOn = DateTime.Now;
+            entity.DataStatus = EuDataStatus.Deleted;
             var removedEntity = this._dbSet.Remove(entity).Entity;
             var num = await this._context.SaveChangesAsync();
             var entity1 = removedEntity;
@@ -73,15 +77,16 @@ namespace N_Tier.DataAccess.Repositories.Impl
 
         public async Task<TEntity> UpdateAsync(TEntity entity)
         {
+            entity.UpdatedOn = DateTime.Now;
             this._dbSet.Update(entity);
             var num = await this._context.SaveChangesAsync();
             return entity;
         }
 
-        public async Task<IEnumerable<History<TEntity>>> GetAllHistoryAsync(
+        public async Task<List<History<TEntity>>> GetAllHistoryAsync(
             Expression<Func<History<TEntity>, bool>> filter = null)
         {
-            return await _mongoCollection.Find(filter ?? (u => true)).ToListAsync();
+            return await _mongoCollection.Find(filter ?? (u => true)).ToListAsync<History<TEntity>>>();
         }
 
         public async Task<History<TEntity>> CreateHistoryAsync(History<TEntity> entity)
