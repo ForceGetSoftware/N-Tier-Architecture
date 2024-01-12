@@ -48,19 +48,46 @@ namespace N_Tier.DataAccess.Repositories.Impl
             return entity1;
         }
 
-        public async Task<List<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>> predicate)
+        public async Task<List<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>> predicate, params Expression<Func<TEntity, object>>[] includeProperties)
         {
-            return await this._dbSet.Where<TEntity>(predicate).ToListAsync<TEntity>();
+            IQueryable<TEntity> query = _dbSet;
+            if (includeProperties != null)
+            {
+                query = includeProperties.Aggregate(query, (current, include) => current.Include(include));
+            }
+            if (predicate != null)
+            {
+                query = query.AsExpandable().Where(predicate);
+            }
+            return await query.ToListAsync<TEntity>();
         }
 
         public async Task<TEntity> GetFirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate)
         {
-            return await this._dbSet.Where<TEntity>(predicate).FirstOrDefaultAsync<TEntity>();
+            IQueryable<TEntity> query = _dbSet;
+            if (includeProperties != null)
+            {
+                query = includeProperties.Aggregate(query, (current, include) => current.Include(include));
+            }
+            if (predicate != null)
+            {
+                query = query.AsExpandable().Where(predicate);
+            }
+            return await query.FirstOrDefaultAsync<TEntity>();
         }
 
         public async Task<TEntity> GetFirstAsync(Expression<Func<TEntity, bool>> predicate)
         {
-            return await this._dbSet.Where<TEntity>(predicate).FirstOrDefaultAsync<TEntity>() ??
+            IQueryable<TEntity> query = _dbSet;
+            if (includeProperties != null)
+            {
+                query = includeProperties.Aggregate(query, (current, include) => current.Include(include));
+            }
+            if (predicate != null)
+            {
+                query = query.AsExpandable().Where(predicate);
+            }
+            return await query.FirstOrDefaultAsync<TEntity>() ??
                    throw new ResourceNotFoundException(typeof(TEntity));
         }
 
