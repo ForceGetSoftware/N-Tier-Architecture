@@ -13,6 +13,7 @@ public class ResourceNotFoundException : Exception
     {
     }
 
+    [Obsolete("Obsolete")]
     protected ResourceNotFoundException(SerializationInfo info, StreamingContext context) : base(info, context)
     {
     }

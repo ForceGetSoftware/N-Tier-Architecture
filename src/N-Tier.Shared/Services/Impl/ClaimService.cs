@@ -21,4 +21,8 @@ public class ClaimService : IClaimService
     {
         return _httpContextAccessor.HttpContext?.User?.FindFirst(key)?.Value;
     }
+    public string GetAuthorization()
+    {
+        return _httpContextAccessor.HttpContext.Request.Headers.Authorization.ToString();
+    }
 }
