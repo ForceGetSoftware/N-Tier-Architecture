@@ -3,7 +3,7 @@ using Forceget.Enums;
 
 namespace N_Tier.Core.Common;
 
-public abstract class CustomBaseEntity
+public abstract class ForcegetBaseEntity : BaseEntity
 {
     [Key]
     public int Id { get; set; }

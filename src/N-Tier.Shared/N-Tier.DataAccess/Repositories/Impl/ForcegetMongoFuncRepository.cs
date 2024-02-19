@@ -1,4 +1,5 @@
 using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Configuration;
 using MongoDB.Driver;
 using N_Tier.Core.Entities;
@@ -42,7 +43,7 @@ public class ForcegetMongoFuncRepository : IForcegetMongoFuncRepository
         var entityCollection = _mongoDatabase.GetCollection<History<T>>(
             typeof(T).Name);
         return await entityCollection
-            .Find(x => x.PrimaryRefId == primaryRefId && x.CreationTime.AddDays(7) > DateTime.Now)
+            .Find(x => x.PrimaryRefId == primaryRefId && x.CreationTime.AddDays(1) > DateTime.Now)
             .FirstOrDefaultAsync();
     }
 
@@ -70,15 +71,11 @@ public class ForcegetMongoFuncRepository : IForcegetMongoFuncRepository
     }
     public async Task SaveAsync<T>(string primaryRefId, T element)
     {
-        var mongoItem = await AsQuery<T>(f => f.PrimaryRefId == primaryRefId).AnyAsync();
-        if (mongoItem)
+        var mongoItem = await AsQuery<T>(f => f.PrimaryRefId == primaryRefId).FirstOrDefaultAsync();
+        if (mongoItem != null)
         {
-            await UpdateAsync(primaryRefId,
-                new History<T>()
-                {
-                    PrimaryRefId = primaryRefId,
-                    DbObject = element
-                });
+            mongoItem.DbObject = element;
+            await UpdateAsync(primaryRefId, mongoItem);
         }
         else
         {
