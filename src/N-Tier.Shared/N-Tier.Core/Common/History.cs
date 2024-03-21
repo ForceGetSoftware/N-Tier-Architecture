@@ -4,6 +4,7 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace N_Tier.Core.Entities;
 
+[BsonIgnoreExtraElements]
 public class History<T>
 {
     public ObjectId Id { get; set; }

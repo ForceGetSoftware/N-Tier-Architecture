@@ -6,12 +6,10 @@ using Forceget.Enums;
 using MongoDB.Driver;
 using N_Tier.Core.Entities;
 
-#nullable enable
 namespace N_Tier.DataAccess.Repositories.Impl
 {
     public class CustomBaseRepository<TEntity> : ICustomBaseRepository<
-#nullable disable
-        TEntity> where TEntity : CustomBaseEntity
+        TEntity> where TEntity : ForcegetBaseEntity
     {
         private readonly DbContext _context;
         private readonly DbSet<TEntity> _dbSet;
@@ -57,12 +55,12 @@ namespace N_Tier.DataAccess.Repositories.Impl
             }
             if (predicate != null)
             {
-                query = query.AsExpandable().Where(predicate);
+                query = query.Where(predicate);
             }
             return await query.ToListAsync<TEntity>();
         }
 
-        public async Task<TEntity> GetFirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate)
+        public async Task<TEntity> GetFirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate, params Expression<Func<TEntity, object>>[] includeProperties)
         {
             IQueryable<TEntity> query = _dbSet;
             if (includeProperties != null)
@@ -71,12 +69,12 @@ namespace N_Tier.DataAccess.Repositories.Impl
             }
             if (predicate != null)
             {
-                query = query.AsExpandable().Where(predicate);
+                query = query.Where(predicate);
             }
             return await query.FirstOrDefaultAsync<TEntity>();
         }
 
-        public async Task<TEntity> GetFirstAsync(Expression<Func<TEntity, bool>> predicate)
+        public async Task<TEntity> GetFirstAsync(Expression<Func<TEntity, bool>> predicate, params Expression<Func<TEntity, object>>[] includeProperties)
         {
             IQueryable<TEntity> query = _dbSet;
             if (includeProperties != null)
@@ -85,7 +83,7 @@ namespace N_Tier.DataAccess.Repositories.Impl
             }
             if (predicate != null)
             {
-                query = query.AsExpandable().Where(predicate);
+                query = query.Where(predicate);
             }
             return await query.FirstOrDefaultAsync<TEntity>() ??
                    throw new ResourceNotFoundException(typeof(TEntity));

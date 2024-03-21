@@ -1,5 +1,7 @@
 ﻿using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
+using N_Tier.Application.Models;
 using N_Tier.Core.Common;
 using N_Tier.Core.Exceptions;
 
@@ -64,5 +66,26 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
         await _context.SaveChangesAsync();
 
         return entity;
+    }
+
+    public async Task<ApiListResult<List<TResult>>> GetFilteredListAsync<TResult>(
+        Expression<Func<TEntity, TResult>> select, Expression<Func<TEntity, bool>> where,
+        Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
+        Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> include = null,
+        int skip = 0, int take = 10)
+    {
+        var query = _dbSet.AsQueryable();
+        List<TResult> list;
+
+        if (where != null)
+            query = query.Where(where);
+        if (include != null)
+            query = include(query);
+        if (orderBy != null)
+            list = await orderBy(query).Select(select).Skip(skip).Take(take).ToListAsync();
+        else
+            list = await query.Select(select).Skip(skip).Take(take).ToListAsync();
+
+        return ApiListResult<List<TResult>>.Success(list, await query.CountAsync());
     }
 }
