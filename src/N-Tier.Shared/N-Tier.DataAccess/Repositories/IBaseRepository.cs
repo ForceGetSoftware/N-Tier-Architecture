@@ -1,11 +1,12 @@
 ﻿using System.Linq.Expressions;
+using FS.FilterExpressionCreator.Filters;
 using Microsoft.EntityFrameworkCore.Query;
 using N_Tier.Application.Models;
-using N_Tier.Core.Common;
+using N_Tier.Shared.N_Tier.Core.Common;
 
 namespace N_Tier.DataAccess.Repositories;
 
-public interface IBaseRepository<TEntity> where TEntity : BaseEntity
+public interface IBaseRepository<TEntity>
 {
     IQueryable<TEntity> AsQueryable();
     Task<TEntity> GetFirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate);
@@ -24,4 +25,8 @@ public interface IBaseRepository<TEntity> where TEntity : BaseEntity
         Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
         Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> include = null,
         int skip = 0, int take = 10);
+
+    Task<int> CountAsync<TEntity>(IQueryable<TEntity> queryable, EntityFilter<TEntity> where);
+    Task<List<TEntity>> GetAllGenericAsync(GetAllRequest<TEntity> model);
+    Task<List<TEntity>> GetAllGenericAsync<TEntity>(IQueryable<TEntity> queryable, GetAllRequest<TEntity> model) ;
 }
