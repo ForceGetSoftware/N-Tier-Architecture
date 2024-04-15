@@ -1,13 +1,14 @@
 ﻿using System.Linq.Expressions;
+using FS.FilterExpressionCreator.Filters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 using N_Tier.Application.Models;
-using N_Tier.Core.Common;
 using N_Tier.Core.Exceptions;
+using N_Tier.Shared.N_Tier.Core.Common;
 
 namespace N_Tier.DataAccess.Repositories.Impl;
 
-public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : BaseEntity
+public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : class
 {
     private readonly DbContext _context;
     private readonly DbSet<TEntity> _dbSet;
@@ -31,12 +32,9 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
         return addedEntity;
     }
 
-    public async Task<TEntity> DeleteAsync(TEntity entity)
+    public Task<TEntity> DeleteAsync(TEntity entity)
     {
-        var removedEntity = _dbSet.Remove(entity).Entity;
-        await _context.SaveChangesAsync();
-
-        return removedEntity;
+        throw new Exception("Update Soft Delete!");
     }
 
     public async Task<List<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>> predicate)
@@ -87,5 +85,27 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
             list = await query.Select(select).Skip(skip).Take(take).ToListAsync();
 
         return ApiListResult<List<TResult>>.Success(list, await query.CountAsync());
+    }
+
+    public Task<int> CountAsync<TEntity>(IQueryable<TEntity> queryable, EntityFilter<TEntity> where)
+    {
+        return queryable.CountAsync(where);
+    }
+
+    public async Task<List<TEntity>> GetAllGenericAsync(GetAllRequest<TEntity> model)
+    {
+        return await _dbSet.Where(model.Filter)
+            .Skip(model.Skip)
+            .Take(model.Take)
+            .ToListAsync();
+    }
+
+    public async Task<List<TEntity>> GetAllGenericAsync<TEntity>(IQueryable<TEntity> queryable,
+        GetAllRequest<TEntity> model)
+    {
+        return await queryable.Where(model.Filter)
+            .Skip(model.Skip)
+            .Take(model.Take)
+            .ToListAsync();
     }
 }
