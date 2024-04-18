@@ -3,7 +3,7 @@
 public interface IClaimService
 {
     string GetUserId();
-
     string GetClaim(string key);
     string GetAuthorization();
+    bool IsSystemAdmin();
 }
