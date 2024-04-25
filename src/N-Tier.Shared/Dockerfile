@@ -8,7 +8,7 @@ COPY ./nuget.config ./
 COPY ./ForcegetApplicationBase.Core/ ./
 # Build and publish a release
 RUN dotnet build --configfile ../../nuget.config -c Release
-#RUN dotnet pack --configfile ../../nuget.config -c Release /p:Version=8.1.22
+#RUN dotnet pack  -c Release /p:Version=8.1.26
 RUN dotnet pack --configfile ../../nuget.config -c Release /p:Version=7.0.${BUILD_NUMBER}
 
 #RUN dotnet nuget push -s https://devops-baget.forceget.com/v3/index.json ./bin/Release/ForcegetApplicationBase.Core.8.1.22.nupkg --api-key NUGET-SERVER-API-KEY

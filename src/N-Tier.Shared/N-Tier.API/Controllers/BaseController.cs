@@ -1,5 +1,6 @@
 using FS.FilterExpressionCreator.Filters;
 using Microsoft.AspNetCore.Mvc;
+using N_Tier.Application.Models;
 using N_Tier.Application.Services;
 using N_Tier.Shared.N_Tier.Core.Common;
 
@@ -21,18 +22,18 @@ public class BaseController<TEntity>(IBaseService<TEntity> service) : ApiControl
     [HttpPost("AddAsync")]
     public virtual async Task<IActionResult> AddAsync(TEntity entity)
     {
-        return Ok(await service.AddAsync(entity));
+        return Ok(ApiResult<TEntity>.Success(await service.AddAsync(entity)));
     }
 
     [HttpPut("UpdateAsync")]
     public virtual async Task<IActionResult> UpdateAsync(TEntity entity)
     {
-        return Ok(await service.UpdateAsync(entity));
+        return Ok(ApiResult<TEntity>.Success(await service.UpdateAsync(entity)));
     }
 
     [HttpDelete("DeleteAsync")]
     public virtual async Task<IActionResult> DeleteAsync(TEntity entity)
     {
-        return Ok(await service.DeleteAsync(entity));
+        return Ok(ApiResult<TEntity>.Success(await service.DeleteAsync(entity)));
     }
 }
