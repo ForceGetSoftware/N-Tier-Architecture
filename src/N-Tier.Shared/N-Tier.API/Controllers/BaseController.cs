@@ -1,4 +1,4 @@
-using FS.FilterExpressionCreator.Filters;
+﻿using FS.FilterExpressionCreator.Filters;
 using Microsoft.AspNetCore.Mvc;
 using N_Tier.Application.Models;
 using N_Tier.Application.Services;
@@ -9,13 +9,14 @@ namespace N_Tier.API.Controllers;
 public class BaseController<TEntity>(IBaseService<TEntity> service) : ApiController
 {
     [HttpGet("GetAllAsync")]
-    public virtual async Task<IActionResult> GetAllAsync([FromQuery] EntityFilter<TEntity> filter, int take, int skip)
+    public virtual async Task<IActionResult> GetAllAsync([FromQuery] EntityFilter<TEntity> filter, int take, int skip, string search)
     {
         return Ok(await service.GetAllGenericAsync(new GetAllRequest<TEntity>()
         {
             Filter = filter,
             Take = take,
-            Skip = skip
+            Skip = skip,
+            Search = search
         }));
     }
 
