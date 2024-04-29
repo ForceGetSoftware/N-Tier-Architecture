@@ -1,4 +1,4 @@
-using FS.FilterExpressionCreator.Abstractions.Attributes;
+﻿using FS.FilterExpressionCreator.Abstractions.Attributes;
 using FS.FilterExpressionCreator.Filters;
 using FS.SortQueryableCreator.Sorts;
 
@@ -11,4 +11,5 @@ public class GetAllRequest<TEntity>
     public EntitySort<TEntity> Sort { get; set; }
     public int Skip { get; set; }
     public int Take { get; set; }
+    public string Search { get; set; }
 }
