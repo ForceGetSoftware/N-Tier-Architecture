@@ -10,20 +10,20 @@ namespace N_Tier.DataAccess.Persistence;
 public class DatabaseContext : IdentityDbContext<ApplicationUser>
 {
     private readonly IClaimService _claimService;
-
+    
     public DatabaseContext(DbContextOptions options, IClaimService claimService) : base(options)
     {
         _claimService = claimService;
     }
-
-
+    
+    
     protected override void OnModelCreating(ModelBuilder builder)
     {
         builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
-
+        
         base.OnModelCreating(builder);
     }
-
+    
     public new async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new())
     {
         foreach (var entry in ChangeTracker.Entries<IAuditedEntity>())
@@ -38,7 +38,7 @@ public class DatabaseContext : IdentityDbContext<ApplicationUser>
                     entry.Entity.UpdatedOn = DateTime.Now;
                     break;
             }
-
+        
         return await base.SaveChangesAsync(cancellationToken);
     }
 }

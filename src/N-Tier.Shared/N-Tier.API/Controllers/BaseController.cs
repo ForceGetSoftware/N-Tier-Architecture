@@ -9,9 +9,10 @@ namespace N_Tier.API.Controllers;
 public class BaseController<TEntity>(IBaseService<TEntity> service) : ApiController
 {
     [HttpGet("GetAllAsync")]
-    public virtual async Task<IActionResult> GetAllAsync([FromQuery] EntityFilter<TEntity> filter, int take, int skip, string search)
+    public virtual async Task<IActionResult> GetAllAsync([FromQuery] EntityFilter<TEntity> filter, int take, int skip,
+        string search)
     {
-        return Ok(await service.GetAllGenericAsync(new GetAllRequest<TEntity>()
+        return Ok(await service.GetAllGenericAsync(new GetAllRequest<TEntity>
         {
             Filter = filter,
             Take = take,
@@ -19,19 +20,19 @@ public class BaseController<TEntity>(IBaseService<TEntity> service) : ApiControl
             Search = search
         }));
     }
-
+    
     [HttpPost("AddAsync")]
     public virtual async Task<IActionResult> AddAsync(TEntity entity)
     {
         return Ok(ApiResult<TEntity>.Success(await service.AddAsync(entity)));
     }
-
+    
     [HttpPut("UpdateAsync")]
     public virtual async Task<IActionResult> UpdateAsync(TEntity entity)
     {
         return Ok(ApiResult<TEntity>.Success(await service.UpdateAsync(entity)));
     }
-
+    
     [HttpDelete("DeleteAsync")]
     public virtual async Task<IActionResult> DeleteAsync(TEntity entity)
     {

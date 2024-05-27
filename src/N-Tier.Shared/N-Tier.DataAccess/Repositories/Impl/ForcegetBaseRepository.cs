@@ -4,59 +4,60 @@ using N_Tier.Core.Exceptions;
 
 namespace N_Tier.DataAccess.Repositories.Impl;
 
-public class ForcegetBaseRepository<TEntity> : IForcegetBaseRepository<
-#nullable disable
-    TEntity> where TEntity : class
+public class ForcegetBaseRepository<TEntity> : IForcegetBaseRepository<TEntity> where TEntity : class
 {
     private readonly DbContext _context;
     private readonly DbSet<TEntity> _dbSet;
-
+    
     protected ForcegetBaseRepository(DbContext context)
     {
-        this._context = context;
-        this._dbSet = context.Set<TEntity>();
+        _context = context;
+        _dbSet = context.Set<TEntity>();
     }
-
-    public IQueryable<TEntity> AsQueryable() => this._dbSet.AsQueryable();
-
+    
+    public IQueryable<TEntity> AsQueryable()
+    {
+        return _dbSet.AsQueryable();
+    }
+    
     public async Task<TEntity> AddAsync(TEntity entity)
     {
-        var addedEntity = (await this._dbSet.AddAsync(entity)).Entity;
-        var num = await this._context.SaveChangesAsync();
+        var addedEntity = (await _dbSet.AddAsync(entity)).Entity;
+        var num = await _context.SaveChangesAsync();
         var entity1 = addedEntity;
-        addedEntity = default(TEntity);
+        addedEntity = default;
         return entity1;
     }
-
+    
     public async Task<TEntity> DeleteAsync(TEntity entity)
     {
-        var removedEntity = this._dbSet.Remove(entity).Entity;
-        var num = await this._context.SaveChangesAsync();
+        var removedEntity = _dbSet.Remove(entity).Entity;
+        var num = await _context.SaveChangesAsync();
         var entity1 = removedEntity;
-        removedEntity = default(TEntity);
+        removedEntity = default;
         return entity1;
     }
-
+    
     public async Task<List<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>> predicate)
     {
-        return await this._dbSet.Where<TEntity>(predicate).ToListAsync<TEntity>();
+        return await _dbSet.Where(predicate).ToListAsync();
     }
-
+    
     public async Task<TEntity> GetFirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate)
     {
-        return await this._dbSet.Where<TEntity>(predicate).FirstOrDefaultAsync<TEntity>();
+        return await _dbSet.Where(predicate).FirstOrDefaultAsync();
     }
-
+    
     public async Task<TEntity> GetFirstAsync(Expression<Func<TEntity, bool>> predicate)
     {
-        return await this._dbSet.Where<TEntity>(predicate).FirstOrDefaultAsync<TEntity>() ??
+        return await _dbSet.Where(predicate).FirstOrDefaultAsync() ??
                throw new ResourceNotFoundException(typeof(TEntity));
     }
-
+    
     public async Task<TEntity> UpdateAsync(TEntity entity)
     {
-        this._dbSet.Update(entity);
-        var num = await this._context.SaveChangesAsync();
+        _dbSet.Update(entity);
+        var num = await _context.SaveChangesAsync();
         return entity;
     }
 }

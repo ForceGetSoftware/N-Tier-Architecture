@@ -5,8 +5,8 @@ namespace N_Tier.Core.Common;
 
 public abstract class ForcegetBaseEntity : BaseEntity
 {
-    [Key]
-    public int Id { get; set; }
+    [Key] public int Id { get; set; }
+    
     public Guid RefId { get; set; }
     public Guid CreatedBy { get; set; }
     public DateTime CreatedOn { get; set; }

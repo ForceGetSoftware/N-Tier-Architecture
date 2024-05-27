@@ -17,6 +17,7 @@ public class ClaimService : IClaimService
     {
         return GetClaim(ClaimTypes.NameIdentifier);
     }
+    
     public string GetCompanyId()
     {
         return GetHeader("CompanyId");
@@ -25,10 +26,6 @@ public class ClaimService : IClaimService
     public string GetClaim(string key)
     {
         return _httpContextAccessor.HttpContext?.User?.FindFirst(key)?.Value;
-    }
-    public string GetHeader(string key)
-    {
-        return _httpContextAccessor.HttpContext?.Request.Headers[key].ToString();
     }
     
     public string GetAuthorization()
@@ -51,5 +48,10 @@ public class ClaimService : IClaimService
         {
             return false;
         }
+    }
+    
+    public string GetHeader(string key)
+    {
+        return _httpContextAccessor.HttpContext?.Request.Headers[key].ToString();
     }
 }

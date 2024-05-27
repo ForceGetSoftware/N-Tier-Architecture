@@ -13,10 +13,10 @@ public class ValidateModelAttribute : Attribute, IAsyncResultFilter
             var errors = context.ModelState.Values
                 .SelectMany(modelState => modelState.Errors)
                 .Select(modelError => modelError.ErrorMessage);
-
+            
             context.Result = new BadRequestObjectResult(ApiResult<string>.Failure(errors));
         }
-
+        
         await next();
     }
 }
