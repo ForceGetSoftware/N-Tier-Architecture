@@ -3,8 +3,6 @@ using FluentValidation;
 using FluentValidation.AspNetCore;
 using FS.FilterExpressionCreator.Mvc.Extensions;
 using FS.FilterExpressionCreator.Swashbuckle.Extensions;
-using FS.SortQueryableCreator.Mvc.Extensions;
-using FS.SortQueryableCreator.Swashbuckle.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -22,15 +20,16 @@ public static class ApiDependencyInjection
     {
         services.AddControllers(
             config => config.Filters.Add(typeof(ValidateModelAttribute))
-        ).AddFilterExpressionSupport().AddSortQueryableSupport();
+        ).AddFilterExpressionSupport();
         
         services.AddFluentValidationAutoValidation();
         services.AddValidatorsFromAssemblyContaining(typeof(IValidationsMarker));
     }
     
-    public static void UseSentry(this IWebHostBuilder services)
+    public static void UseForcegetSentry(this IWebHostBuilder services)
     {
         // Add the following line:
+#if !DEBUG
         services.UseSentry(o =>
         {
             o.Dsn = "https://32d239b4ea70bf225394e6eb12cb4f76@o4507326304485376.ingest.us.sentry.io/4507326307762176";
@@ -48,6 +47,7 @@ public static class ApiDependencyInjection
             // Note: By default, the profiler is initialized asynchronously. This can
             // be tuned by passing a desired initialization timeout to the constructor.
         });
+#endif
     }
     
     public static void AddJwt(this IServiceCollection services, IConfiguration configuration)
@@ -90,8 +90,6 @@ public static class ApiDependencyInjection
             });
             
             s.AddFilterExpressionSupport();
-            
-            s.AddSortQueryableSupport();
             
             s.AddSecurityRequirement(new OpenApiSecurityRequirement
             {

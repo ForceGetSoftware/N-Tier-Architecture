@@ -27,6 +27,7 @@ public interface IBaseRepository<TEntity>
         int skip = 0, int take = 10);
     
     Task<int> CountAsync<TEntity>(IQueryable<TEntity> queryable, EntityFilter<TEntity> where);
+    Task<int> CountAsync(GetAllRequest<TEntity> model);
     Task<List<TEntity>> GetAllGenericAsync(GetAllRequest<TEntity> model);
     Task<List<TEntity>> GetAllGenericAsync<TEntity>(IQueryable<TEntity> queryable, GetAllRequest<TEntity> model);
 }

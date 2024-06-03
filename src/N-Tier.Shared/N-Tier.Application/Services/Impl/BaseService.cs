@@ -25,7 +25,7 @@ public class BaseService<TEntity>(IBaseRepository<TEntity> repository) : IBaseSe
     public async Task<ApiListResult<List<TEntity>>> GetAllGenericAsync(GetAllRequest<TEntity> model)
     {
         return ApiListResult<List<TEntity>>.Success(await repository.GetAllGenericAsync(model),
-            await repository.CountAsync(repository.AsQueryable(), model.Filter));
+            await repository.CountAsync(model));
     }
     
     public Task<TEntity> GetFirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate)

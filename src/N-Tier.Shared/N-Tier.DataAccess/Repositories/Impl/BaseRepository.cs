@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore.Query;
 using N_Tier.Application.Models;
 using N_Tier.Core.Exceptions;
 using N_Tier.Shared.N_Tier.Core.Common;
+using System.Linq.Dynamic.Core;
 
 namespace N_Tier.DataAccess.Repositories.Impl;
 
@@ -92,9 +93,15 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
         return queryable.CountAsync(where);
     }
     
+    public async Task<int> CountAsync(GetAllRequest<TEntity> model)
+    {
+        return await _dbSet.CountAsync(model.Filter);
+    }
+    
     public async Task<List<TEntity>> GetAllGenericAsync(GetAllRequest<TEntity> model)
     {
         return await _dbSet.Where(model.Filter)
+            .OrderBy(model.OrderBy ?? "Id DESC")
             .Skip(model.Skip)
             .Take(model.Take)
             .ToListAsync();
@@ -104,6 +111,7 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
         GetAllRequest<TEntity> model)
     {
         return await queryable.Where(model.Filter)
+            .OrderBy(model.OrderBy ?? "Id DESC")
             .Skip(model.Skip)
             .Take(model.Take)
             .ToListAsync();

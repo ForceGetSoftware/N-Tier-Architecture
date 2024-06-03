@@ -19,8 +19,6 @@
         <PackageReference Include="Schick.FilterExpressionCreator" Version="4.6.1"/>
         <PackageReference Include="Schick.FilterExpressionCreator.Mvc" Version="4.6.1"/>
         <PackageReference Include="Schick.FilterExpressionCreator.Swashbuckle" Version="4.6.1"/>
-        <PackageReference Include="Schick.SortQueryableCreator.Mvc" Version="4.6.1"/>
-        <PackageReference Include="Schick.SortQueryableCreator.Swashbuckle" Version="4.6.1"/>
         <PackageReference Include="Sentry.AspNetCore" Version="4.6.2"/>
         <PackageReference Include="Sentry.Profiling" Version="4.6.2"/>
         <PackageReference Include="StackExchange.Redis" Version="2.7.4"/>
@@ -40,5 +38,6 @@
         <PackageReference Include="Serilog.Sinks.Literate" Version="3.0.0"/>
         <PackageReference Include="Serilog.Enrichers.Thread" Version="3.1.0"/>
         <PackageReference Include="Serilog.Enrichers.Environment" Version="2.3.0"/>
+        <PackageReference Include="System.Linq.Dynamic.Core" Version="1.4.0" />
     </ItemGroup>
 </Project>
