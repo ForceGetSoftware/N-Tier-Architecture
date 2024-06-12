@@ -5,5 +5,5 @@ namespace N_Tier.DataAccess.Persistence;
 
 public interface IDatabaseContextSeed
 {
-    Task SeedDatabaseAsync(DatabaseContext context, UserManager<ApplicationUser> userManager);
+    Task SeedDatabaseAsync(ForcegetDatabaseContext context, UserManager<ApplicationUser> userManager);
 }
