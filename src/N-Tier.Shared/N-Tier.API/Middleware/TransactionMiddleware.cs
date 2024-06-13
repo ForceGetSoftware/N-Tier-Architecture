@@ -16,7 +16,7 @@ public class TransactionMiddleware
         _logger = logger;
     }
     
-    public async Task Invoke(HttpContext context, DatabaseContext databaseContext)
+    public async Task Invoke(HttpContext context, ForcegetDatabaseContext databaseContext)
     {
         await using var transaction = await databaseContext.Database.BeginTransactionAsync();
         
