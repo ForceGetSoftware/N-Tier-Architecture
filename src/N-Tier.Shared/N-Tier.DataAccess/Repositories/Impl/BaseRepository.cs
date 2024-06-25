@@ -31,14 +31,70 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
         return addedEntity;
     }
 
+    public async Task<int> AddRangeAsync(IEnumerable<TEntity> entities)
+    {
+        await _dbSet.AddRangeAsync(entities);
+        return await _context.SaveChangesAsync();
+    }
+
+    public async Task<TEntity> UpdateAsync(TEntity entity)
+    {
+        _dbSet.Update(entity);
+        await _context.SaveChangesAsync();
+        return entity;
+    }
+
+    public async Task<int> UpdateRangeAsync(IEnumerable<TEntity> entities)
+    {
+        _dbSet.UpdateRange(entities);
+        return await _context.SaveChangesAsync();
+    }
+
     public async Task<TEntity> DeleteAsync(TEntity entity)
     {
         if (entity is ForcegetBaseEntity)
             (entity as ForcegetBaseEntity).DataStatus = EDataStatus.Deleted;
 
         _dbSet.Update(entity);
+
         await _context.SaveChangesAsync();
         return entity;
+    }
+
+    public async Task<TEntity> DeleteAsync(TEntity entity, bool hardDelete)
+    {
+        if (hardDelete == true)
+        {
+            _dbSet.Remove(entity);
+            await _context.SaveChangesAsync();
+            return entity;
+        }
+
+        return await DeleteAsync(entity);
+    }
+
+    public async Task<int> DeleteRangeAsync(IEnumerable<TEntity> entities)
+    {
+        foreach (var entity in entities)
+        {
+            if (entity is ForcegetBaseEntity)
+                (entity as ForcegetBaseEntity).DataStatus = EDataStatus.Deleted;
+        }
+
+        _dbSet.UpdateRange(entities);
+
+        return await _context.SaveChangesAsync();
+    }
+
+    public async Task<int> DeleteRangeAsync(IEnumerable<TEntity> entities, bool hardDelete)
+    {
+        if (hardDelete == true)
+        {
+            _dbSet.RemoveRange(entities);
+            return await _context.SaveChangesAsync();
+        }
+
+        return await DeleteRangeAsync(entities);
     }
 
     public async Task<List<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>> predicate) => await _dbSet.Where(predicate).ToListAsync();
@@ -49,13 +105,6 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
     {
         var entity = await _dbSet.Where(predicate).FirstOrDefaultAsync();
         return entity ?? throw new ResourceNotFoundException(typeof(TEntity));
-    }
-
-    public async Task<TEntity> UpdateAsync(TEntity entity)
-    {
-        _dbSet.Update(entity);
-        await _context.SaveChangesAsync();
-        return entity;
     }
 
     public async Task<ApiListResult<List<TResult>>> GetFilteredListAsync<TResult>(
