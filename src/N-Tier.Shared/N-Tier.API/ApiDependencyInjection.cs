@@ -28,26 +28,26 @@ public static class ApiDependencyInjection
     
     public static void UseForcegetSentry(this IWebHostBuilder services)
     {
-        // Add the following line:
-#if !DEBUG
-        services.UseSentry(o =>
-        {
-            o.Dsn = "https://32d239b4ea70bf225394e6eb12cb4f76@o4507326304485376.ingest.us.sentry.io/4507326307762176";
-            // When configuring for the first time, to see what the SDK is doing:
-            o.Debug = true;
-            // Set TracesSampleRate to 1.0 to capture 100%
-            // of transactions for performance monitoring.
-            // We recommend adjusting this value in production
-            o.TracesSampleRate = 1.0;
-            // Sample rate for profiling, applied on top of othe TracesSampleRate,
-            // e.g. 0.2 means we want to profile 20 % of the captured transactions.
-            // We recommend adjusting this value in production.
-            o.ProfilesSampleRate = 1.0;
-            // Requires NuGet package: Sentry.Profiling
-            // Note: By default, the profiler is initialized asynchronously. This can
-            // be tuned by passing a desired initialization timeout to the constructor.
-        });
-#endif
+//         // Add the following line:
+// #if !DEBUG
+//         services.UseSentry(o =>
+//         {
+//             o.Dsn = "https://32d239b4ea70bf225394e6eb12cb4f76@o4507326304485376.ingest.us.sentry.io/4507326307762176";
+//             // When configuring for the first time, to see what the SDK is doing:
+//             o.Debug = true;
+//             // Set TracesSampleRate to 1.0 to capture 100%
+//             // of transactions for performance monitoring.
+//             // We recommend adjusting this value in production
+//             o.TracesSampleRate = 1.0;
+//             // Sample rate for profiling, applied on top of othe TracesSampleRate,
+//             // e.g. 0.2 means we want to profile 20 % of the captured transactions.
+//             // We recommend adjusting this value in production.
+//             o.ProfilesSampleRate = 1.0;
+//             // Requires NuGet package: Sentry.Profiling
+//             // Note: By default, the profiler is initialized asynchronously. This can
+//             // be tuned by passing a desired initialization timeout to the constructor.
+//         });
+// #endif
     }
     
     public static void AddJwt(this IServiceCollection services, IConfiguration configuration)
