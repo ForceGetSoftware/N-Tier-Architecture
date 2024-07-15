@@ -7,7 +7,7 @@ deploy:
   stage: deploy
   script:
     - cd src/N-Tier.Shared/
-    - dotnet pack -c Release
+    - dotnet pack -c Release /p:version=8.2.$CI_JOB_ID
     - dotnet nuget add source "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/nuget/index.json" --name gitlab --username gitlab-ci-token --password $CI_JOB_TOKEN --store-password-in-clear-text
     - dotnet nuget push "bin/Release/*.nupkg" --source gitlab
   only:
