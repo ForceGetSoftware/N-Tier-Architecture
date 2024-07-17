@@ -1,5 +1,7 @@
 using System.Text;
+using System.Text.Json;
 using Microsoft.Extensions.Configuration;
+using N_Tier.Application.Models;
 using RabbitMQ.Client;
 
 namespace N_Tier.Application.Helpers;
@@ -31,6 +33,29 @@ public class ForcegetRabbitMqManager : IForcegetRabbitMqManager
             null);
         
         var body = Encoding.UTF8.GetBytes(message);
+        
+        channel.BasicPublish(string.Empty,
+            queue,
+            null,
+            body);
+        
+        return true;
+    }
+    
+    public bool SendMail(RabbitSendMailDto data)
+    {
+        var factory = new ConnectionFactory { HostName = configuration["RabbitMq"] };
+        using var connection = factory.CreateConnection();
+        using var channel = connection.CreateModel();
+
+        const string queue = "mail";
+        channel.QueueDeclare(queue,
+            false,
+            false,
+            false,
+            null);
+        
+        var body = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(data));
         
         channel.BasicPublish(string.Empty,
             queue,
