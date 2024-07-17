@@ -9,6 +9,7 @@ namespace N_Tier.Application.Helpers;
 public interface IForcegetRabbitMqManager
 {
     bool Send(string queue, string message);
+    bool SendMail(RabbitSendMailDto data);
 }
 
 public class ForcegetRabbitMqManager : IForcegetRabbitMqManager
