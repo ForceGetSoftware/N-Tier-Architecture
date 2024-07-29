@@ -9,49 +9,51 @@ using System.Linq.Expressions;
 
 namespace N_Tier.DataAccess.Repositories.Impl;
 
-public class BaseGenericRepository : IBaseGenericRepository
+public class BaseGenericRepository<TDbContext>(TDbContext context) : IBaseGenericRepository where TDbContext : DbContext
 {
-    private readonly DbContext _context;
-
-    protected BaseGenericRepository(DbContext context)
-    {
-        _context = context;
-    }
-
     public IQueryable<TEntity> AsQueryable<TEntity>() where TEntity : class
     {
-        var _dbSet = _context.Set<TEntity>();
-        return _dbSet.AsQueryable();
+        var dbSet =
+            context.Set<TEntity>();
+        return dbSet.AsQueryable();
     }
 
     public async Task<TEntity> AddAsync<TEntity>(TEntity entity) where TEntity : class
     {
-        var _dbSet = _context.Set<TEntity>();
-        var addedEntity = (await _dbSet.AddAsync(entity)).Entity;
-        await _context.SaveChangesAsync();
+        var dbSet =
+            context.Set<TEntity>();
+        var addedEntity = (await dbSet.AddAsync(entity)).Entity;
+        await
+            context.SaveChangesAsync();
         return addedEntity;
     }
 
     public async Task<int> AddRangeAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : class
     {
-        var _dbSet = _context.Set<TEntity>();
-        await _dbSet.AddRangeAsync(entities);
-        return await _context.SaveChangesAsync();
+        var dbSet =
+            context.Set<TEntity>();
+        await dbSet.AddRangeAsync(entities);
+        return await
+            context.SaveChangesAsync();
     }
 
     public async Task<TEntity> UpdateAsync<TEntity>(TEntity entity) where TEntity : class
     {
-        var _dbSet = _context.Set<TEntity>();
-        _dbSet.Update(entity);
-        await _context.SaveChangesAsync();
+        var dbSet =
+            context.Set<TEntity>();
+        dbSet.Update(entity);
+        await
+            context.SaveChangesAsync();
         return entity;
     }
 
     public async Task<int> UpdateRangeAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : class
     {
-        var _dbSet = _context.Set<TEntity>();
-        _dbSet.UpdateRange(entities);
-        return await _context.SaveChangesAsync();
+        var dbSet =
+            context.Set<TEntity>();
+        dbSet.UpdateRange(entities);
+        return await
+            context.SaveChangesAsync();
     }
 
     public async Task<TEntity> DeleteAsync<TEntity>(TEntity entity) where TEntity : class
@@ -59,10 +61,12 @@ public class BaseGenericRepository : IBaseGenericRepository
         if (entity is ForcegetBaseEntity)
             (entity as ForcegetBaseEntity).DataStatus = EDataStatus.Deleted;
 
-        var _dbSet = _context.Set<TEntity>();
-        _dbSet.Update(entity);
+        var dbSet =
+            context.Set<TEntity>();
+        dbSet.Update(entity);
 
-        await _context.SaveChangesAsync();
+        await
+            context.SaveChangesAsync();
         return entity;
     }
 
@@ -70,9 +74,11 @@ public class BaseGenericRepository : IBaseGenericRepository
     {
         if (hardDelete == true)
         {
-            var _dbSet = _context.Set<TEntity>();
-            _dbSet.Remove(entity);
-            await _context.SaveChangesAsync();
+            var dbSet =
+                context.Set<TEntity>();
+            dbSet.Remove(entity);
+            await
+                context.SaveChangesAsync();
             return entity;
         }
 
@@ -87,66 +93,79 @@ public class BaseGenericRepository : IBaseGenericRepository
                 (entity as ForcegetBaseEntity).DataStatus = EDataStatus.Deleted;
         }
 
-        var _dbSet = _context.Set<TEntity>();
-        _dbSet.UpdateRange(entities);
+        var dbSet =
+            context.Set<TEntity>();
+        dbSet.UpdateRange(entities);
 
-        return await _context.SaveChangesAsync();
+        return await
+            context.SaveChangesAsync();
     }
 
-    public async Task<int> DeleteRangeAsync<TEntity>(IEnumerable<TEntity> entities, bool hardDelete) where TEntity : class
+    public async Task<int> DeleteRangeAsync<TEntity>(IEnumerable<TEntity> entities, bool hardDelete)
+        where TEntity : class
     {
         if (hardDelete == true)
         {
-            var _dbSet = _context.Set<TEntity>();
-            _dbSet.RemoveRange(entities);
-            return await _context.SaveChangesAsync();
+            var dbSet =
+                context.Set<TEntity>();
+            dbSet.RemoveRange(entities);
+            return await
+                context.SaveChangesAsync();
         }
 
         return await DeleteRangeAsync(entities);
     }
 
-    public async Task<List<TEntity>> GetAllAsync<TEntity>(Expression<Func<TEntity, bool>> predicate) where TEntity : class
+    public async Task<List<TEntity>> GetAllAsync<TEntity>(Expression<Func<TEntity, bool>> predicate)
+        where TEntity : class
     {
-
-        var _dbSet = _context.Set<TEntity>();
-        return await _dbSet.Where(predicate).ToListAsync();
+        var dbSet =
+            context.Set<TEntity>();
+        return await dbSet.Where(predicate).ToListAsync();
     }
 
-    public async Task<TEntity> GetFirstOrDefaultAsync<TEntity>(Expression<Func<TEntity, bool>> predicate) where TEntity : class
+    public async Task<TEntity> GetFirstOrDefaultAsync<TEntity>(Expression<Func<TEntity, bool>> predicate)
+        where TEntity : class
     {
-        var _dbSet = _context.Set<TEntity>();
-        return await _dbSet.Where(predicate).FirstOrDefaultAsync();
+        var dbSet =
+            context.Set<TEntity>();
+        return await dbSet.Where(predicate).FirstOrDefaultAsync();
     }
 
     public async Task<TEntity> GetFirstAsync<TEntity>(Expression<Func<TEntity, bool>> predicate) where TEntity : class
     {
-        var _dbSet = _context.Set<TEntity>();
-        var entity = await _dbSet.Where(predicate).FirstOrDefaultAsync();
+        var dbSet =
+            context.Set<TEntity>();
+        var entity = await dbSet.Where(predicate).FirstOrDefaultAsync();
         return entity ?? throw new ResourceNotFoundException(typeof(TEntity));
     }
 
-    public Task<int> CountAsync<TEntity>(IQueryable<TEntity> queryable, EntityFilter<TEntity> where) where TEntity : class
+    public Task<int> CountAsync<TEntity>(IQueryable<TEntity> queryable, EntityFilter<TEntity> where)
+        where TEntity : class
     {
         return queryable.CountAsync(where);
     }
 
     public async Task<int> CountAsync<TEntity>(GetAllRequest<TEntity> model) where TEntity : class
     {
-        var _dbSet = _context.Set<TEntity>();
-        return await _dbSet.CountAsync(model.Filter);
+        var dbSet =
+            context.Set<TEntity>();
+        return await dbSet.CountAsync(model.Filter);
     }
 
     public async Task<List<TEntity>> GetAllGenericAsync<TEntity>(GetAllRequest<TEntity> model) where TEntity : class
     {
-        var _dbSet = _context.Set<TEntity>();
-        return await _dbSet.Where(model.Filter)
+        var dbSet =
+            context.Set<TEntity>();
+        return await dbSet.Where(model.Filter)
             .OrderBy(model.OrderBy ?? "Id DESC")
             .Skip(model.Skip)
             .Take(model.Take)
             .ToListAsync();
     }
 
-    public async Task<List<TEntity>> GetAllGenericAsync<TEntity>(IQueryable<TEntity> queryable, GetAllRequest<TEntity> model) where TEntity : class
+    public async Task<List<TEntity>> GetAllGenericAsync<TEntity>(IQueryable<TEntity> queryable,
+        GetAllRequest<TEntity> model) where TEntity : class
     {
         return await queryable.Where(model.Filter)
             .OrderBy(model.OrderBy ?? "Id DESC")
