@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using N_Tier.Application.Helpers;
 using N_Tier.Application.MappingProfiles;
+using N_Tier.DataAccess.Repositories.Impl;
 using Serilog;
 
 namespace N_Tier.Application;
@@ -55,6 +56,7 @@ public static class BaseApplicationDependencyInjection
     {
         services.AddStackExchangeRedisCache(options => { options.Configuration = redisUrl; });
         services.Add(ServiceDescriptor.Singleton<IDistributedCache, RedisCache>());
+        services.AddScoped<IBaseRedisRepository, BaseRedisRepository>();
         return services;
     }
 }
