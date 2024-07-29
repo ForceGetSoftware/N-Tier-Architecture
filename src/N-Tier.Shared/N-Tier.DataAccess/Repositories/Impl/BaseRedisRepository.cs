@@ -1,8 +1,4 @@
-using System.Linq.Expressions;
 using Microsoft.Extensions.Caching.Distributed;
-using Microsoft.Extensions.Configuration;
-using MongoDB.Driver;
-using N_Tier.Core.Entities;
 
 namespace N_Tier.DataAccess.Repositories.Impl;
 

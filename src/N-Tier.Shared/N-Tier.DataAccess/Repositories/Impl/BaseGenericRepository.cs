@@ -1,8 +1,6 @@
 ﻿using Forceget.Enums;
 using FS.FilterExpressionCreator.Filters;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query;
-using N_Tier.Application.Models;
 using N_Tier.Core.Common;
 using N_Tier.Core.Exceptions;
 using N_Tier.Shared.N_Tier.Core.Common;

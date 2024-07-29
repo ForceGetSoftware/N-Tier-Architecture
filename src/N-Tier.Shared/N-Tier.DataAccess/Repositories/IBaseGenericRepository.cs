@@ -1,6 +1,4 @@
 ﻿using FS.FilterExpressionCreator.Filters;
-using Microsoft.EntityFrameworkCore.Query;
-using N_Tier.Application.Models;
 using N_Tier.Shared.N_Tier.Core.Common;
 using System.Linq.Expressions;
 
