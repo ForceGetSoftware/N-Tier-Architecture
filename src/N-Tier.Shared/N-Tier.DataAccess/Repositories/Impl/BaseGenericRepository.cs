@@ -11,8 +11,13 @@ using System.Linq.Expressions;
 
 namespace N_Tier.DataAccess.Repositories.Impl;
 
-public class BaseGenericRepository(DbContext context) : IBaseGenericRepository
+public class BaseGenericRepository() : IBaseGenericRepository
 {
+    protected BaseGenericRepository(DbContext context)
+    {
+        _context = context;
+    }
+
     public IQueryable<TEntity> AsQueryable<TEntity>() where TEntity : class
     {
         var _dbSet = context.Set<TEntity>();
