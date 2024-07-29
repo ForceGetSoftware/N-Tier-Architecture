@@ -11,7 +11,7 @@ using System.Linq.Expressions;
 
 namespace N_Tier.DataAccess.Repositories.Impl;
 
-public class BaseRepository(DbContext context) : IBaseGenericRepository
+public class BaseGenericRepository(DbContext context) : IBaseGenericRepository
 {
     public IQueryable<TEntity> AsQueryable<TEntity>() where TEntity : class
     {
