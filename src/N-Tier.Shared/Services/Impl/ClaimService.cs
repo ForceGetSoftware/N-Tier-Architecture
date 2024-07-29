@@ -9,6 +9,7 @@ public class ClaimService(IHttpContextAccessor httpContextAccessor) : IClaimServ
     private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
 
     public string GetUserId() => GetClaim(ClaimTypes.NameIdentifier);
+    public string GetRoleGroupTypeId() => GetClaim("RoleGroupTypeId");
 
     public string GetCompanyId() => GetHeader("CompanyId");
 

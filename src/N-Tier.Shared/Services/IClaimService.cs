@@ -7,4 +7,5 @@ public interface IClaimService
     string GetClaim(string key);
     string GetAuthorization();
     bool IsSystemAdmin();
+    string GetRoleGroupTypeId();
 }
