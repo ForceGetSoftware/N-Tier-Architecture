@@ -27,6 +27,28 @@ public class BaseGenericRepository<TDbContext>(TDbContext context) : IBaseGeneri
             context.SaveChangesAsync();
         return addedEntity;
     }
+    
+    public async Task<TEntity> AddOrUpdateAsync<TEntity>(TEntity entity) where TEntity : class
+    {
+        var dbSet =
+            context.Set<TEntity>();
+        var exist = GetFirstOrDefaultAsync(context=>context.RefId == entity.RefId)
+        if (exist!=null)
+        {
+            var addedEntity = (await dbSet.AddAsync(entity)).Entity;
+            await
+                context.SaveChangesAsync();
+            return addedEntity;
+        }
+        else
+        {
+            dbSet.Update(entity);
+            await
+                context.SaveChangesAsync();
+            return entity;
+        }
+        
+    }
 
     public async Task<int> AddRangeAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : class
     {
