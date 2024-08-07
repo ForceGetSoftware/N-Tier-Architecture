@@ -35,17 +35,17 @@ public class BaseGenericRepository<TDbContext>(TDbContext context) : IBaseGeneri
         var exist = GetFirstOrDefaultAsync(context=>context.RefId == entity.RefId)
         if (exist!=null)
         {
-            var addedEntity = (await dbSet.AddAsync(entity)).Entity;
-            await
-                context.SaveChangesAsync();
-            return addedEntity;
-        }
-        else
-        {
             dbSet.Update(entity);
             await
                 context.SaveChangesAsync();
             return entity;
+        }
+        else
+        {
+            var addedEntity = (await dbSet.AddAsync(entity)).Entity;
+            await
+                context.SaveChangesAsync();
+            return addedEntity;
         }
         
     }
