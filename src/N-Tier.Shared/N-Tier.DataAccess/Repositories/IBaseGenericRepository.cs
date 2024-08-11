@@ -15,7 +15,9 @@ public interface IBaseGenericRepository
     Task<List<TEntity>> GetAllAsync<TEntity>(Expression<Func<TEntity, bool>> predicate) where TEntity : class;
 
     Task<TEntity> AddAsync<TEntity>(TEntity entity) where TEntity : class;
-
+    
+    Task<TEntity> AddOrUpdateAsync<TEntity>(TEntity entity) where TEntity : class;
+    
     Task<int> AddRangeAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : class;
 
     Task<TEntity> UpdateAsync<TEntity>(TEntity entity) where TEntity : class;
