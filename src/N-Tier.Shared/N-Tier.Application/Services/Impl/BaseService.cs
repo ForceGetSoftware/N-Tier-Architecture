@@ -12,11 +12,6 @@ public class BaseService<TEntity>(IBaseRepository<TEntity> repository) : IBaseSe
         return repository.AddAsync(entity);
     }
     
-    public Task<TEntity> AddOrUpdateAsync(TEntity entity)
-    {
-        return repository.AddOrUpdateAsync(entity);
-    }
-    
     public Task<TEntity> UpdateAsync(TEntity entity)
     {
         return repository.UpdateAsync(entity);
