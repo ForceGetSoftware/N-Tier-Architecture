@@ -28,12 +28,6 @@ public class BaseController<TEntity>(IBaseService<TEntity> service) : ApiControl
         return Ok(ApiResult<TEntity>.Success(await service.AddAsync(entity)));
     }
     
-    [HttpPost("AddorUpdateAsync")]
-    public virtual async Task<IActionResult> AddOrUpdateAsync(TEntity entity)
-    {
-        return Ok(ApiResult<TEntity>.Success(await service.AddOrUpdateAsync(entity)));
-    }
-    
     [HttpPut("UpdateAsync")]
     public virtual async Task<IActionResult> UpdateAsync(TEntity entity)
     {

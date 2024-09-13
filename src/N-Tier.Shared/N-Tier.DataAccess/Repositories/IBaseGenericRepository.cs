@@ -16,8 +16,6 @@ public interface IBaseGenericRepository
 
     Task<TEntity> AddAsync<TEntity>(TEntity entity) where TEntity : class;
     
-    Task<TEntity> AddOrUpdateAsync<TEntity>(TEntity entity) where TEntity : class;
-    
     Task<int> AddRangeAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : class;
 
     Task<TEntity> UpdateAsync<TEntity>(TEntity entity) where TEntity : class;
