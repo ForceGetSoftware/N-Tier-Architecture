@@ -8,13 +8,14 @@ namespace N_Tier.DataAccess.Repositories.Impl;
 public class ForcegetMongoFuncRepository : IForcegetMongoFuncRepository
 {
     private readonly IMongoDatabase _mongoDatabase;
+    private readonly IMongoClient _mongoClient;
     
     public ForcegetMongoFuncRepository(IConfiguration configuration)
     {
-        var mongoClient = new MongoClient(
+        _mongoClient = new MongoClient(
             configuration["Mongo:ConnectionString"]);
         
-        _mongoDatabase = mongoClient.GetDatabase(
+        _mongoDatabase = _mongoClient.GetDatabase(
             configuration["Mongo:DatabaseName"]);
     }
     
@@ -67,11 +68,50 @@ public class ForcegetMongoFuncRepository : IForcegetMongoFuncRepository
         await entityCollection.ReplaceOneAsync(x => x.PrimaryRefId == primaryRefId, item);
     }
     
+    public async Task UpdateAllAsync<T>(IEnumerable<History<T>> documents,
+        Func<History<T>, FilterDefinition<History<T>>> filterExpression)
+    {
+        var entityCollection = _mongoDatabase.GetCollection<History<T>>(
+            typeof(T).Name);
+        
+        using var session = await _mongoClient.StartSessionAsync();
+        session.StartTransaction();
+        
+        try
+        {
+            var bulkOps = new List<WriteModel<History<T>>>();
+            
+            foreach (var document in documents)
+            {
+                var filter = filterExpression(document);
+                var replaceOne = new ReplaceOneModel<History<T>>(filter, document)
+                {
+                    IsUpsert = true
+                };
+                bulkOps.Add(replaceOne);
+            }
+            
+            await entityCollection.BulkWriteAsync(session, bulkOps);
+            await session.CommitTransactionAsync();
+        }
+        catch
+        {
+            await session.AbortTransactionAsync();
+            throw;
+        }
+    }
+    
     public async Task RemoveAsync<T>(string primaryRefId)
     {
         var entityCollection = _mongoDatabase.GetCollection<History<T>>(
             typeof(T).Name);
         await entityCollection.DeleteOneAsync(x => x.PrimaryRefId == primaryRefId);
+    }
+    
+    public async Task RemoveAllAsync<T>(Expression<Func<History<T>, bool>> filterExpression)
+    {
+        var entityCollection = _mongoDatabase.GetCollection<History<T>>(typeof(T).Name);
+        await entityCollection.DeleteManyAsync(filterExpression);
     }
     
     public async Task SaveAsync<T>(string primaryRefId, T element)

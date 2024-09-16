@@ -13,6 +13,8 @@ public interface IForcegetMongoFuncRepository
     Task<History<T>?> GetLatestAsync<T>(string primaryRefId);
     Task CreateAsync<T>(History<T> item);
     Task UpdateAsync<T>(string primaryRefId, History<T> item);
+    Task UpdateAllAsync<T>(IEnumerable<History<T>> documents, Func<History<T>, FilterDefinition<History<T>>> filterExpression);
     Task RemoveAsync<T>(string primaryRefId);
+    Task RemoveAllAsync<T>(Expression<Func<History<T>, bool>> filter);
     Task SaveAsync<T>(string primaryRefId, T element);
 }
