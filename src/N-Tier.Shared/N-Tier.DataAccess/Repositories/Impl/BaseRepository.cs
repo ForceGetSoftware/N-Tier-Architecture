@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 using N_Tier.Application.Models;
 using N_Tier.Core.Common;
+using N_Tier.Core.Entities;
 using N_Tier.Core.Exceptions;
 using N_Tier.Shared.N_Tier.Core.Common;
 using System.Linq.Dynamic.Core;
@@ -14,12 +15,14 @@ namespace N_Tier.DataAccess.Repositories.Impl;
 public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : class
 {
     private readonly DbContext _context;
+    private readonly IForcegetMongoFuncRepository forcegetMongoFuncRepository;
     private readonly DbSet<TEntity> _dbSet;
 
-    protected BaseRepository(DbContext context)
+    protected BaseRepository(DbContext context, IForcegetMongoFuncRepository forcegetMongoFuncRepository)
     {
         _context = context;
         _dbSet = context.Set<TEntity>();
+        this.forcegetMongoFuncRepository = forcegetMongoFuncRepository;
     }
 
     public IQueryable<TEntity> AsQueryable() => _dbSet.AsQueryable();
@@ -39,6 +42,16 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
 
     public async Task<TEntity> UpdateAsync(TEntity entity)
     {
+        var refId = entity.GetType().GetProperties().First(x => x.Name == "RefId")?.ToString() ?? Guid.NewGuid().ToString();
+        await forcegetMongoFuncRepository.CreateAsync(new History<TEntity>
+        {
+            Action = null,
+            CreationTime = DateTime.Now,
+            DbObject = entity,
+            PrimaryRefId = refId
+
+        });
+
         _dbSet.Update(entity);
         await _context.SaveChangesAsync();
         return entity;
@@ -46,6 +59,19 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
 
     public async Task<int> UpdateRangeAsync(IEnumerable<TEntity> entities)
     {
+        foreach (var entity in entities)
+        {
+            var refId = entity.GetType().GetProperties().First(x => x.Name == "RefId")?.ToString() ?? Guid.NewGuid().ToString();
+            await forcegetMongoFuncRepository.CreateAsync(new History<TEntity>
+            {
+                Action = null,
+                CreationTime = DateTime.Now,
+                DbObject = entity,
+                PrimaryRefId = refId
+
+            });
+        }
+
         _dbSet.UpdateRange(entities);
         return await _context.SaveChangesAsync();
     }
@@ -144,4 +170,7 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
             .Skip(model.Skip)
             .Take(model.Take)
             .ToListAsync();
+
+    public async Task<List<History<TEntity>>> GetAllHistory(Expression<Func<History<TEntity>, bool>> predicate) =>
+        await forcegetMongoFuncRepository.GetAllAsync(predicate);
 }

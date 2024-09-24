@@ -1,5 +1,4 @@
 ﻿using FS.FilterExpressionCreator.Filters;
-using N_Tier.Core.Entities;
 using N_Tier.Shared.N_Tier.Core.Common;
 using System.Linq.Expressions;
 
@@ -14,8 +13,6 @@ public interface IBaseGenericRepository
     Task<TEntity> GetFirstAsync<TEntity>(Expression<Func<TEntity, bool>> predicate) where TEntity : class;
 
     Task<List<TEntity>> GetAllAsync<TEntity>(Expression<Func<TEntity, bool>> predicate) where TEntity : class;
-
-    Task<List<History<TEntity>>> GetAllHistory<TEntity>(Expression<Func<History<TEntity>, bool>> predicate);
 
     Task<TEntity> AddAsync<TEntity>(TEntity entity) where TEntity : class;
 
