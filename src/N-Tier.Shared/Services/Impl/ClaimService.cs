@@ -11,7 +11,16 @@ public class ClaimService(IHttpContextAccessor httpContextAccessor) : IClaimServ
     public string GetUserId() => GetClaim(ClaimTypes.NameIdentifier);
     public string GetRoleGroupTypeId() => GetClaim("RoleGroupTypeId");
 
-    public string GetCompanyId() => GetHeader("CompanyId");
+    public string GetCompanyId()
+    {
+        var companyId = GetHeader("CompanyId");
+        if (string.IsNullOrEmpty(companyId))
+        {
+            companyId = GetHeader("Companyid");
+        }
+
+        return companyId;
+    }
 
     public string GetClaim(string key) => _httpContextAccessor.HttpContext?.User?.FindFirst(key)?.Value;
 
