@@ -21,19 +21,25 @@ public class BaseController<TEntity>(IBaseService<TEntity> service) : ApiControl
             OrderBy = orderBy
         }));
     }
-    
+
+    [HttpGet("GetAllHistory")]
+    public virtual async Task<IActionResult> GetAllHistory(string refId)
+    {
+        return Ok(await service.GetAllHistory(refId));
+    }
+
     [HttpPost("AddAsync")]
     public virtual async Task<IActionResult> AddAsync(TEntity entity)
     {
         return Ok(ApiResult<TEntity>.Success(await service.AddAsync(entity)));
     }
-    
+
     [HttpPut("UpdateAsync")]
     public virtual async Task<IActionResult> UpdateAsync(TEntity entity)
     {
         return Ok(ApiResult<TEntity>.Success(await service.UpdateAsync(entity)));
     }
-    
+
     [HttpDelete("DeleteAsync")]
     public virtual async Task<IActionResult> DeleteAsync(TEntity entity)
     {
