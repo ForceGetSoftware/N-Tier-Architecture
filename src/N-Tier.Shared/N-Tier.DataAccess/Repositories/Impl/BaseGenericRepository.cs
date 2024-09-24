@@ -150,7 +150,6 @@ public class BaseGenericRepository<TDbContext>(TDbContext context, IForcegetMong
     }
 
     public async Task<List<History<TEntity>>> GetAllHistory<TEntity>(Expression<Func<History<TEntity>, bool>> predicate)
-        where TEntity : class
     {
         return await forcegetMongoFuncRepository.GetAllAsync(predicate);
     }
