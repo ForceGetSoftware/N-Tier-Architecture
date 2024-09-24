@@ -1,6 +1,8 @@
+using System.Linq.Dynamic.Core;
 using System.Linq.Expressions;
 using Microsoft.Extensions.Configuration;
 using MongoDB.Driver;
+using N_Tier.Application.Helpers;
 using N_Tier.Application.Models;
 using N_Tier.Core.Entities;
 
@@ -24,6 +26,16 @@ public class ForcegetMongoFuncRepository : IForcegetMongoFuncRepository
     {
         var entityCollection = _mongoDatabase.GetCollection<History<T>>(
             typeof(T).Name);
+        return entityCollection.Find(filter);
+    }
+    
+    public async Task<IFindFluent<History<T>, History<T>>> AsQueryByDbObject<T>(Expression<Func<T, bool>> dbObjectFilter)
+    {
+        var entityCollection = _mongoDatabase.GetCollection<History<T>>(
+            typeof(T).Name);
+
+        Expression<Func<History<T>, bool>> filter = ExpressionHelper.ConvertFilter<History<T>, T>(dbObjectFilter, nameof(History<T>.DbObject));
+        
         return entityCollection.Find(filter);
     }
 
