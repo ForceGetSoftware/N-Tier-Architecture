@@ -2,14 +2,16 @@
 using FS.FilterExpressionCreator.Filters;
 using Microsoft.EntityFrameworkCore;
 using N_Tier.Core.Common;
+using N_Tier.Core.Entities;
 using N_Tier.Core.Exceptions;
 using N_Tier.Shared.N_Tier.Core.Common;
+using SharpCompress.Common;
 using System.Linq.Dynamic.Core;
 using System.Linq.Expressions;
 
 namespace N_Tier.DataAccess.Repositories.Impl;
 
-public class BaseGenericRepository<TDbContext>(TDbContext context) : IBaseGenericRepository where TDbContext : DbContext
+public class BaseGenericRepository<TDbContext>(TDbContext context, IForcegetMongoFuncRepository forcegetMongoFuncRepository) : IBaseGenericRepository where TDbContext : DbContext
 {
     public IQueryable<TEntity> AsQueryable<TEntity>() where TEntity : class
     {
@@ -39,6 +41,16 @@ public class BaseGenericRepository<TDbContext>(TDbContext context) : IBaseGeneri
 
     public async Task<TEntity> UpdateAsync<TEntity>(TEntity entity) where TEntity : class
     {
+        var refId = entity.GetType().GetProperties().First(x => x.Name == "RefId")?.ToString() ?? Guid.NewGuid().ToString();
+        await forcegetMongoFuncRepository.CreateAsync(new History<TEntity>
+        {
+            Action = null,
+            CreationTime = DateTime.Now,
+            DbObject = entity,
+            PrimaryRefId = entity.GetType().GetProperties().First(x => x.Name == "RefId")?.ToString() ?? Guid.NewGuid().ToString()
+
+        });
+
         var dbSet =
             context.Set<TEntity>();
         dbSet.Update(entity);
@@ -49,6 +61,19 @@ public class BaseGenericRepository<TDbContext>(TDbContext context) : IBaseGeneri
 
     public async Task<int> UpdateRangeAsync<TEntity>(IEnumerable<TEntity> entities) where TEntity : class
     {
+        foreach (var entity in entities)
+        {
+            var refId = entity.GetType().GetProperties().First(x => x.Name == "RefId")?.ToString() ?? Guid.NewGuid().ToString();
+            await forcegetMongoFuncRepository.CreateAsync(new History<TEntity>
+            {
+                Action = null,
+                CreationTime = DateTime.Now,
+                DbObject = entity,
+                PrimaryRefId = entity.GetType().GetProperties().First(x => x.Name == "RefId")?.ToString() ?? Guid.NewGuid().ToString()
+
+            });
+        }
+
         var dbSet =
             context.Set<TEntity>();
         dbSet.UpdateRange(entities);
@@ -122,6 +147,11 @@ public class BaseGenericRepository<TDbContext>(TDbContext context) : IBaseGeneri
         var dbSet =
             context.Set<TEntity>();
         return await dbSet.Where(predicate).ToListAsync();
+    }
+
+    public async Task<List<History<TEntity>>> GetAllHistory<TEntity>(Expression<Func<History<TEntity>, bool>> predicate)
+    {
+        return await forcegetMongoFuncRepository.GetAllAsync(predicate);
     }
 
     public async Task<TEntity> GetFirstOrDefaultAsync<TEntity>(Expression<Func<TEntity, bool>> predicate)
