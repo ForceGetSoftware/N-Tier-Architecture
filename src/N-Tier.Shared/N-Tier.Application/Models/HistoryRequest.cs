@@ -8,6 +8,7 @@ namespace N_Tier.Shared.N_Tier.Application.Models
         public DateTime? EndDate { get; set; }
         public string RefId { get; set; }
         public string DatabaseName { get; set; }
+        public string TableName { get; set; }
         public OrderBy OrderBy { get; set; } = OrderBy.Desc;
     }
 }

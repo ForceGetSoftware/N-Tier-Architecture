@@ -7,21 +7,10 @@ using System.Linq.Expressions;
 
 namespace N_Tier.Application.Services.Impl;
 
-public class BaseService<TEntity> : IBaseService<TEntity>
+public class BaseService<TEntity>(IBaseRepository<TEntity> repository, IForcegetMongoFuncRepository forcegetMongoFuncRepository) : IBaseService<TEntity>
 {
-    private readonly IBaseRepository<TEntity> repository;
-    private readonly IForcegetMongoFuncRepository forcegetMongoFuncRepository;
-
-    public BaseService(IBaseRepository<TEntity> repository)
-    {
-        this.repository = repository;
-    }
-
-    public BaseService(IBaseRepository<TEntity> repository, IForcegetMongoFuncRepository forcegetMongoFuncRepository)
-    {
-        this.repository = repository;
-        this.forcegetMongoFuncRepository = forcegetMongoFuncRepository;
-    }
+    private readonly IBaseRepository<TEntity> repository = repository;
+    private readonly IForcegetMongoFuncRepository forcegetMongoFuncRepository = forcegetMongoFuncRepository;
 
     public Task<TEntity> AddAsync(TEntity entity)
     {
