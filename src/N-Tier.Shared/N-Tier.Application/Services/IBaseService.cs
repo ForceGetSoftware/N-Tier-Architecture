@@ -1,5 +1,6 @@
 ﻿using N_Tier.Application.Models;
 using N_Tier.Core.Entities;
+using N_Tier.Shared.N_Tier.Application.Models;
 using N_Tier.Shared.N_Tier.Core.Common;
 
 namespace N_Tier.Application.Services;
@@ -14,5 +15,5 @@ public interface IBaseService<TEntity>
 
     Task<ApiListResult<List<TEntity>>> GetAllGenericAsync(GetAllRequest<TEntity> model);
 
-    Task<ApiListResult<List<History<TEntity>>>> GetAllHistory(string refId);
+    Task<ApiListResult<List<History<TEntity>>>> GetAllHistory(HistoryRequest model);
 }

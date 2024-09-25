@@ -1,8 +1,11 @@
-using System.Linq.Expressions;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using MongoDB.Driver;
 using N_Tier.Application.Models;
 using N_Tier.Core.Entities;
+using N_Tier.Shared.N_Tier.Application.Enums;
+using N_Tier.Shared.N_Tier.Application.Helpers;
+using N_Tier.Shared.N_Tier.Application.Models;
+using System.Linq.Expressions;
 
 namespace N_Tier.DataAccess.Repositories.Impl;
 
@@ -35,6 +38,33 @@ public class ForcegetMongoFuncRepository : IForcegetMongoFuncRepository
     public async Task<List<History<T>>> GetAllAsync<T>(Expression<Func<History<T>, bool>> filter)
     {
         return await AsQuery(filter).ToListAsync();
+    }
+
+    public async Task<List<History<T>>> GetAllAsync<T>(HistoryRequest model)
+    {
+        Expression<Func<History<T>, bool>> filter = x => x.PrimaryRefId == model.RefId;
+
+        if (model.StartDate.HasValue)
+            filter = filter.And(x => x.CreationTime >= model.StartDate.Value);
+
+        if (model.EndDate.HasValue)
+            filter = filter.And(x => x.CreationTime <= model.EndDate.Value);
+
+        var query = AsQuery(filter);
+
+        if (model.OrderBy == OrderBy.Asc)
+            query = query.SortBy(x => x.CreationTime);
+        else
+            query = query.SortByDescending(x => x.CreationTime);
+
+        if (!string.IsNullOrEmpty(model.DatabaseName))
+        {
+            var entityCollection = _mongoClient.GetDatabase(model.DatabaseName).GetCollection<History<T>>(typeof(T).Name);
+            query = entityCollection.Find(filter);
+            return await query.ToListAsync();
+        }
+
+        return await query.ToListAsync();
     }
 
     public async Task<History<T>?> GetAsync<T>(string primaryRefId)
@@ -91,12 +121,12 @@ public class ForcegetMongoFuncRepository : IForcegetMongoFuncRepository
                 };
                 bulkOps.Add(replaceOne);
             }
-            
+
             await entityCollection.BulkWriteAsync(session, bulkOps);
             await session.CommitTransactionAsync();
 
             var bulkWriteResult = await entityCollection.BulkWriteAsync(session, bulkOps, options: new BulkWriteOptions { IsOrdered = false });
-            
+
             return new ReplaceManyResult(bulkWriteResult.MatchedCount, bulkWriteResult.ModifiedCount,
                 bulkWriteResult.Upserts.Count);
         }

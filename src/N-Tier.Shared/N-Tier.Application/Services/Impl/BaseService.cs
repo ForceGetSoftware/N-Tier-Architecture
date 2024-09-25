@@ -1,6 +1,7 @@
 ﻿using N_Tier.Application.Models;
 using N_Tier.Core.Entities;
 using N_Tier.DataAccess.Repositories;
+using N_Tier.Shared.N_Tier.Application.Models;
 using N_Tier.Shared.N_Tier.Core.Common;
 using System.Linq.Expressions;
 
@@ -53,9 +54,9 @@ public class BaseService<TEntity> : IBaseService<TEntity>
         return repository.GetFirstAsync(predicate);
     }
 
-    public async Task<ApiListResult<List<History<TEntity>>>> GetAllHistory(string refId)
+    public async Task<ApiListResult<List<History<TEntity>>>> GetAllHistory(HistoryRequest model)
     {
-        var list = await forcegetMongoFuncRepository.GetAllAsync<TEntity>(x => x.PrimaryRefId == refId);
+        var list = await forcegetMongoFuncRepository.GetAllAsync<TEntity>(model);
         return ApiListResult<List<History<TEntity>>>.Success(list, list.Count);
     }
 }
