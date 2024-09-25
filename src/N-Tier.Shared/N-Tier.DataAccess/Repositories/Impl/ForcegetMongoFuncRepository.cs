@@ -57,11 +57,10 @@ public class ForcegetMongoFuncRepository : IForcegetMongoFuncRepository
         else
             query = query.SortByDescending(x => x.CreationTime);
 
-        if (!string.IsNullOrEmpty(model.DatabaseName))
+        if (!string.IsNullOrEmpty(model.DatabaseName) && !string.IsNullOrEmpty(model.TableName))
         {
-            var entityCollection = _mongoClient.GetDatabase(model.DatabaseName).GetCollection<History<T>>(typeof(T).Name);
+            var entityCollection = _mongoClient.GetDatabase(model.DatabaseName).GetCollection<History<T>>(model.TableName);
             query = entityCollection.Find(filter);
-            return await query.ToListAsync();
         }
 
         return await query.ToListAsync();
