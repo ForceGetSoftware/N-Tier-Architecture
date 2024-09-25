@@ -8,6 +8,7 @@ using N_Tier.Core.Entities;
 using N_Tier.Core.Exceptions;
 using N_Tier.Shared.N_Tier.Application.Enums;
 using N_Tier.Shared.N_Tier.Application.Helpers;
+using N_Tier.Shared.N_Tier.Application.Models;
 using N_Tier.Shared.N_Tier.Core.Common;
 using System.Linq.Dynamic.Core;
 using System.Linq.Expressions;
@@ -226,9 +227,5 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
             .Take(model.Take)
             .ToListAsync();
 
-    public async Task<List<History<TEntity>>> GetAllHistory(Expression<Func<History<TEntity>, bool>> predicate) =>
-        await _forcegetMongoFuncRepository.GetAllAsync(predicate);
-
-    public async Task<List<History<TEntity>>> GetAllHistory(string databaseName, Expression<Func<History<TEntity>, bool>> predicate) =>
-        await _forcegetMongoFuncRepository.GetAllAsync(databaseName, predicate);
+    public async Task<List<History<TEntity>>> GetAllHistory(HistoryRequest model) => await _forcegetMongoFuncRepository.GetAllAsync<TEntity>(model);
 }
