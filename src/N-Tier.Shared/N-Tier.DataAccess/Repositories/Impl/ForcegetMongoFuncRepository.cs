@@ -40,9 +40,9 @@ public class ForcegetMongoFuncRepository : IForcegetMongoFuncRepository
         return await AsQuery(filter).ToListAsync();
     }
 
-    public async Task<List<History<T>>> GetAllAsync<T>(HistoryRequest model)
+    public async Task<List<History<dynamic>>> GetAllAsync(HistoryRequest model)
     {
-        Expression<Func<History<T>, bool>> filter = x => x.PrimaryRefId == model.RefId;
+        Expression<Func<History<dynamic>, bool>> filter = x => x.PrimaryRefId == model.RefId;
 
         if (model.StartDate.HasValue)
             filter = filter.And(x => x.CreationTime >= model.StartDate.Value);
@@ -59,7 +59,7 @@ public class ForcegetMongoFuncRepository : IForcegetMongoFuncRepository
 
         if (!string.IsNullOrEmpty(model.DatabaseName) && !string.IsNullOrEmpty(model.TableName))
         {
-            var entityCollection = _mongoClient.GetDatabase(model.DatabaseName).GetCollection<History<T>>(model.TableName);
+            var entityCollection = _mongoClient.GetDatabase(model.DatabaseName).GetCollection<History<dynamic>>(model.TableName);
             query = entityCollection.Find(filter);
         }
 

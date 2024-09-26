@@ -18,7 +18,7 @@ public interface IBaseRepository<TEntity>
 
     Task<List<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>> predicate);
 
-    Task<List<History<TEntity>>> GetAllHistory(HistoryRequest model);
+    Task<List<History<dynamic>>> GetAllHistory(HistoryRequest model);
 
     Task<TEntity> AddAsync(TEntity entity);
 

@@ -40,9 +40,9 @@ public class BaseGenericService<TEntity>(IBaseGenericRepository repository, IFor
         return repository.GetFirstAsync<TEntity>(predicate);
     }
 
-    public async Task<ApiListResult<List<History<TEntity>>>> GetAllHistory(HistoryRequest model)
+    public async Task<ApiListResult<List<History<dynamic>>>> GetAllHistory(HistoryRequest model)
     {
-        var list = await forcegetMongoFuncRepository.GetAllAsync<TEntity>(model);
-        return ApiListResult<List<History<TEntity>>>.Success(list, list.Count);
+        var list = await forcegetMongoFuncRepository.GetAllAsync(model);
+        return ApiListResult<List<History<dynamic>>>.Success(list, list.Count);
     }
 }
