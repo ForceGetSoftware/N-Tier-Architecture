@@ -40,9 +40,15 @@ public class ForcegetMongoFuncRepository : IForcegetMongoFuncRepository
         return await AsQuery(filter).ToListAsync();
     }
 
-    public async Task<List<History<dynamic>>> GetAllAsync(HistoryRequest model)
+    public async Task<List<History<dynamic>>> GetHistoriesAsync(HistoryRequest model)
     {
-        Expression<Func<History<dynamic>, bool>> filter = x => x.PrimaryRefId == model.RefId;
+        if (!string.IsNullOrEmpty(model.DatabaseName) || !string.IsNullOrEmpty(model.TableName))
+            throw new Exception("DatabaseName and TableName can not be null!");
+
+        Expression<Func<History<dynamic>, bool>> filter = x => true;
+
+        if (!string.IsNullOrEmpty(model.RefId))
+            filter.And(x => x.PrimaryRefId == model.RefId);
 
         if (model.StartDate.HasValue)
             filter = filter.And(x => x.CreationTime >= model.StartDate.Value);
@@ -50,18 +56,13 @@ public class ForcegetMongoFuncRepository : IForcegetMongoFuncRepository
         if (model.EndDate.HasValue)
             filter = filter.And(x => x.CreationTime <= model.EndDate.Value);
 
-        var query = AsQuery(filter);
+        var entityCollection = _mongoClient.GetDatabase(model.DatabaseName).GetCollection<History<dynamic>>(model.TableName);
+        var query = entityCollection.Find(filter);
 
         if (model.OrderBy == OrderBy.Asc)
             query = query.SortBy(x => x.CreationTime);
         else
             query = query.SortByDescending(x => x.CreationTime);
-
-        if (!string.IsNullOrEmpty(model.DatabaseName) && !string.IsNullOrEmpty(model.TableName))
-        {
-            var entityCollection = _mongoClient.GetDatabase(model.DatabaseName).GetCollection<History<dynamic>>(model.TableName);
-            query = entityCollection.Find(filter);
-        }
 
         return await query.ToListAsync();
     }
