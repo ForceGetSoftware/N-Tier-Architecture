@@ -42,7 +42,7 @@ public class ForcegetMongoFuncRepository : IForcegetMongoFuncRepository
 
     public async Task<List<History<dynamic>>> GetHistoriesAsync(HistoryRequest model)
     {
-        if (!string.IsNullOrEmpty(model.DatabaseName) || !string.IsNullOrEmpty(model.TableName))
+        if (string.IsNullOrEmpty(model.DatabaseName) || string.IsNullOrEmpty(model.TableName))
             throw new Exception("DatabaseName and TableName can not be null!");
 
         Expression<Func<History<dynamic>, bool>> filter = x => true;
