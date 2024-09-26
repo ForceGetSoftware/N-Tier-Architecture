@@ -15,5 +15,5 @@ public interface IBaseService<TEntity>
 
     Task<ApiListResult<List<TEntity>>> GetAllGenericAsync(GetAllRequest<TEntity> model);
 
-    Task<ApiListResult<List<History<TEntity>>>> GetAllHistory(HistoryRequest model);
+    Task<ApiListResult<List<History<dynamic>>>> GetAllHistory(HistoryRequest model);
 }

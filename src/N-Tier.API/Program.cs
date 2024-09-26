@@ -1,4 +1,4 @@
-using FluentValidation;
+﻿using FluentValidation;
 using FluentValidation.AspNetCore;
 using N_Tier.API;
 using N_Tier.API.Filters;
@@ -17,7 +17,7 @@ builder.Services.AddControllers(
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddValidatorsFromAssemblyContaining(typeof(IValidationsMarker));
 
-builder.Services.AddSwagger();
+builder.Services.AddSwagger("", "");
 
 builder.Services.AddDataAccess(builder.Configuration, "N-Tier.DataAccess")
     .AddApplication()
