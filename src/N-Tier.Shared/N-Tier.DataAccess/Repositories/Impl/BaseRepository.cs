@@ -227,5 +227,5 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
             .Take(model.Take)
             .ToListAsync();
 
-    public async Task<List<History<dynamic>>> GetAllHistory(HistoryRequest model) => await _forcegetMongoFuncRepository.GetAllAsync(model);
+    public async Task<List<History<dynamic>>> GetAllHistory(HistoryRequest model) => await _forcegetMongoFuncRepository.GetHistoriesAsync(model);
 }
