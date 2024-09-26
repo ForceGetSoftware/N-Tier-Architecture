@@ -48,10 +48,10 @@ public class ForcegetMongoFuncRepository : IForcegetMongoFuncRepository
         Expression<Func<History<dynamic>, bool>> filter = x => x.PrimaryRefId == model.RefId;
 
         if (model.StartDate.HasValue)
-            filter = filter.And(x => x.CreationTime >= model.StartDate.Value);
+            filter = filter.AndAlso(x => x.CreationTime >= model.StartDate.Value);
 
         if (model.EndDate.HasValue)
-            filter = filter.And(x => x.CreationTime <= model.EndDate.Value);
+            filter = filter.AndAlso(x => x.CreationTime <= model.EndDate.Value);
 
         var entityCollection = _mongoClient.GetDatabase(model.DatabaseName).GetCollection<History<dynamic>>(model.TableName);
         var query = entityCollection.Find(filter);
