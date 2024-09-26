@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using N_Tier.Application.Models;
 using N_Tier.Application.Services;
-using N_Tier.Shared.N_Tier.Application.Models;
 using N_Tier.Shared.N_Tier.Core.Common;
 
 namespace N_Tier.API.Controllers;
@@ -21,12 +20,6 @@ public class BaseController<TEntity>(IBaseService<TEntity> service) : ApiControl
             Search = search,
             OrderBy = orderBy
         }));
-    }
-
-    [HttpPost("GetAllHistory")]
-    public virtual async Task<IActionResult> GetAllHistory(HistoryRequest historyRequest)
-    {
-        return Ok(await service.GetAllHistory(historyRequest));
     }
 
     [HttpPost("AddAsync")]

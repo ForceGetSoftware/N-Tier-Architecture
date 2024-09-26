@@ -11,7 +11,7 @@ public interface IForcegetMongoFuncRepository
     IFindFluent<History<T>, History<T>> AsQuery<T>(Expression<Func<History<T>, bool>> filter);
     Task<List<History<T>>> GetAllAsync<T>();
     Task<List<History<T>>> GetAllAsync<T>(Expression<Func<History<T>, bool>> filter);
-    Task<List<History<dynamic>>> GetAllAsync(HistoryRequest model);
+    Task<List<History<dynamic>>> GetHistoriesAsync(HistoryRequest model);
     Task<History<T>?> GetAsync<T>(string primaryRefId);
     Task<History<T>?> GetLatestAsync<T>(string primaryRefId);
     Task CreateAsync<T>(History<T> item);

@@ -1,13 +1,11 @@
 ﻿using N_Tier.Application.Models;
-using N_Tier.Core.Entities;
 using N_Tier.DataAccess.Repositories;
-using N_Tier.Shared.N_Tier.Application.Models;
 using N_Tier.Shared.N_Tier.Core.Common;
 using System.Linq.Expressions;
 
 namespace N_Tier.Application.Services.Impl;
 
-public class BaseGenericService<TEntity>(IBaseGenericRepository repository, IForcegetMongoFuncRepository forcegetMongoFuncRepository) : IBaseService<TEntity> where TEntity : class
+public class BaseGenericService<TEntity>(IBaseGenericRepository repository) : IBaseService<TEntity> where TEntity : class
 {
     public Task<TEntity> AddAsync(TEntity entity)
     {
@@ -38,11 +36,5 @@ public class BaseGenericService<TEntity>(IBaseGenericRepository repository, IFor
     public Task<TEntity> GetFirstAsync(Expression<Func<TEntity, bool>> predicate)
     {
         return repository.GetFirstAsync<TEntity>(predicate);
-    }
-
-    public async Task<ApiListResult<List<History<dynamic>>>> GetAllHistory(HistoryRequest model)
-    {
-        var list = await forcegetMongoFuncRepository.GetAllAsync(model);
-        return ApiListResult<List<History<dynamic>>>.Success(list, list.Count);
     }
 }
