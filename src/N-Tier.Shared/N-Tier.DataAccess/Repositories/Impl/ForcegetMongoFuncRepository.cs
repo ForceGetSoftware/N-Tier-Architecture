@@ -45,10 +45,7 @@ public class ForcegetMongoFuncRepository : IForcegetMongoFuncRepository
         if (string.IsNullOrEmpty(model.DatabaseName) || string.IsNullOrEmpty(model.TableName))
             throw new Exception("DatabaseName and TableName can not be null!");
 
-        Expression<Func<History<dynamic>, bool>> filter = x => true;
-
-        if (!string.IsNullOrEmpty(model.RefId))
-            filter.And(x => x.PrimaryRefId == model.RefId);
+        Expression<Func<History<dynamic>, bool>> filter = x => x.PrimaryRefId == model.RefId;
 
         if (model.StartDate.HasValue)
             filter = filter.And(x => x.CreationTime >= model.StartDate.Value);
