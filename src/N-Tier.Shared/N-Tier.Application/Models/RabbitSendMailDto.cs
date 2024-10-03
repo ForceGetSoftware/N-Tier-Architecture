@@ -1,4 +1,4 @@
-namespace N_Tier.Application.Models;
+﻿namespace N_Tier.Application.Models;
 
 public class RabbitSendMailDto
 {
@@ -15,4 +15,5 @@ public class RabbitMqAttachment
     public string token { get; set; }
     public string name { get; set; }
     public string contenttype { get; set; }
+    public string base64String { get; set; }
 }
