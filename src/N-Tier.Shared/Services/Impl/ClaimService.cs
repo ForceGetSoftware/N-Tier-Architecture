@@ -1,11 +1,10 @@
 ﻿using Microsoft.AspNetCore.Http;
-using N_Tier.DataAccess.Persistence;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
 namespace N_Tier.Shared.Services.Impl;
 
-public class ClaimService(IHttpContextAccessor httpContextAccessor, ForcegetDatabaseContext context) : IClaimService
+public class ClaimService(IHttpContextAccessor httpContextAccessor) : IClaimService
 {
     private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
 
