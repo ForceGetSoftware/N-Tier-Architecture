@@ -6,7 +6,7 @@ public class ApiListResponse<T>
     {
     }
     
-    private ApiListResponse(bool succeeded, List<T> result, int total, IEnumerable<string> errors)
+    private ApiListResponse(bool succeeded, List<T> result, dynamic total, IEnumerable<string> errors)
     {
         Succeeded = succeeded;
         Result = result;
@@ -21,7 +21,7 @@ public class ApiListResponse<T>
     
     public IEnumerable<string> Errors { get; set; }
     
-    public static ApiListResponse<T> Success(List<T> result, int total)
+    public static ApiListResponse<T> Success(List<T> result, dynamic total)
     {
         return new ApiListResponse<T>(true, result, total, new List<string>());
     }
