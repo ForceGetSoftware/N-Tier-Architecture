@@ -11,7 +11,16 @@ public class ClaimService(IHttpContextAccessor httpContextAccessor) : IClaimServ
     public string GetUserId() => GetClaim(ClaimTypes.NameIdentifier);
     public string GetRoleGroupTypeId() => GetClaim("RoleGroupTypeId");
 
-    public string GetCompanyId() => GetHeader("CompanyId");
+    public string GetCompanyId()
+    {
+        var companyId = GetHeader("CompanyId");
+        if (string.IsNullOrEmpty(companyId))
+        {
+            companyId = GetHeader("Companyid");
+        }
+
+        return companyId;
+    }
 
     public string GetClaim(string key) => _httpContextAccessor.HttpContext?.User?.FindFirst(key)?.Value;
 
@@ -35,4 +44,13 @@ public class ClaimService(IHttpContextAccessor httpContextAccessor) : IClaimServ
     }
 
     public string GetHeader(string key) => _httpContextAccessor.HttpContext?.Request.Headers[key].ToString();
+
+    public List<string> GetClaimList()
+    {
+        var bearerPrefix = "Bearer ";
+        var authToken = GetAuthorization().Substring(bearerPrefix.Length);
+        var handler = new JwtSecurityTokenHandler();
+        var jsonToken = handler.ReadToken(authToken);
+        return jsonToken is JwtSecurityToken token ? token.Claims.Select(x => x.Value).ToList() : [];
+    }
 }

@@ -1,8 +1,11 @@
-using System.Linq.Expressions;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using MongoDB.Driver;
 using N_Tier.Application.Models;
 using N_Tier.Core.Entities;
+using N_Tier.Shared.N_Tier.Application.Enums;
+using N_Tier.Shared.N_Tier.Application.Helpers;
+using N_Tier.Shared.N_Tier.Application.Models;
+using System.Linq.Expressions;
 
 namespace N_Tier.DataAccess.Repositories.Impl;
 
@@ -37,6 +40,30 @@ public class ForcegetMongoFuncRepository : IForcegetMongoFuncRepository
         return await AsQuery(filter).ToListAsync();
     }
 
+    public async Task<List<History<dynamic>>> GetHistoriesAsync(HistoryRequest model)
+    {
+        if (string.IsNullOrEmpty(model.DatabaseName) || string.IsNullOrEmpty(model.TableName))
+            throw new Exception("DatabaseName and TableName can not be null!");
+
+        Expression<Func<History<dynamic>, bool>> filter = x => x.PrimaryRefId == model.RefId;
+
+        if (model.StartDate.HasValue)
+            filter = filter.AndAlso(x => x.CreationTime >= model.StartDate.Value);
+
+        if (model.EndDate.HasValue)
+            filter = filter.AndAlso(x => x.CreationTime <= model.EndDate.Value);
+
+        var entityCollection = _mongoClient.GetDatabase(model.DatabaseName).GetCollection<History<dynamic>>(model.TableName);
+        var query = entityCollection.Find(filter);
+
+        if (model.OrderBy == OrderBy.Asc)
+            query = query.SortBy(x => x.CreationTime);
+        else
+            query = query.SortByDescending(x => x.CreationTime);
+
+        return await query.ToListAsync();
+    }
+
     public async Task<History<T>?> GetAsync<T>(string primaryRefId)
     {
         var entityCollection = _mongoDatabase.GetCollection<History<T>>(
@@ -67,6 +94,44 @@ public class ForcegetMongoFuncRepository : IForcegetMongoFuncRepository
             typeof(T).Name);
         item.CreationTime = DateTime.Now;
         await entityCollection.ReplaceOneAsync(x => x.PrimaryRefId == primaryRefId, item);
+    }
+
+    public async Task<ReplaceManyResult> UpdateAllAsync<T>(IEnumerable<History<T>> documents,
+        Func<History<T>, FilterDefinition<History<T>>> filterExpression)
+    {
+        var entityCollection = _mongoDatabase.GetCollection<History<T>>(
+            typeof(T).Name);
+
+        using var session = await _mongoClient.StartSessionAsync();
+        session.StartTransaction();
+
+        try
+        {
+            var bulkOps = new List<WriteModel<History<T>>>();
+
+            foreach (var document in documents)
+            {
+                var filter = filterExpression(document);
+                var replaceOne = new ReplaceOneModel<History<T>>(filter, document)
+                {
+                    IsUpsert = true
+                };
+                bulkOps.Add(replaceOne);
+            }
+
+            await entityCollection.BulkWriteAsync(session, bulkOps);
+            await session.CommitTransactionAsync();
+
+            var bulkWriteResult = await entityCollection.BulkWriteAsync(session, bulkOps, options: new BulkWriteOptions { IsOrdered = false });
+
+            return new ReplaceManyResult(bulkWriteResult.MatchedCount, bulkWriteResult.ModifiedCount,
+                bulkWriteResult.Upserts.Count);
+        }
+        catch
+        {
+            await session.AbortTransactionAsync();
+            throw;
+        }
     }
 
     public async Task RemoveAsync<T>(string primaryRefId)

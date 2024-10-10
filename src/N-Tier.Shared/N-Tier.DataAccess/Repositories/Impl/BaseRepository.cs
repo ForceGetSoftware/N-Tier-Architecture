@@ -4,7 +4,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 using N_Tier.Application.Models;
 using N_Tier.Core.Common;
+using N_Tier.Core.Entities;
 using N_Tier.Core.Exceptions;
+using N_Tier.Shared.N_Tier.Application.Enums;
+using N_Tier.Shared.N_Tier.Application.Helpers;
+using N_Tier.Shared.N_Tier.Application.Models;
 using N_Tier.Shared.N_Tier.Core.Common;
 using System.Linq.Dynamic.Core;
 using System.Linq.Expressions;
@@ -15,11 +19,13 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
 {
     private readonly DbContext _context;
     private readonly DbSet<TEntity> _dbSet;
+    private readonly IForcegetMongoFuncRepository _forcegetMongoFuncRepository;
 
-    protected BaseRepository(DbContext context)
+    protected BaseRepository(DbContext context, IForcegetMongoFuncRepository forcegetMongoFuncRepository)
     {
         _context = context;
         _dbSet = context.Set<TEntity>();
+        _forcegetMongoFuncRepository = forcegetMongoFuncRepository;
     }
 
     public IQueryable<TEntity> AsQueryable() => _dbSet.AsQueryable();
@@ -28,26 +34,66 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
     {
         var addedEntity = (await _dbSet.AddAsync(entity)).Entity;
         await _context.SaveChangesAsync();
+
+        await _forcegetMongoFuncRepository.CreateAsync(new History<TEntity>
+        {
+            Action = MongoHistoryActionType.Add,
+            CreationTime = DateTime.Now,
+            DbObject = addedEntity,
+            PrimaryRefId = ReflectionHelper.GetPropertyValue(addedEntity, "RefId")
+        });
+
         return addedEntity;
     }
 
     public async Task<int> AddRangeAsync(IEnumerable<TEntity> entities)
     {
         await _dbSet.AddRangeAsync(entities);
-        return await _context.SaveChangesAsync();
+        var addedEntities = await _context.SaveChangesAsync();
+
+        foreach (var entity in entities)
+            await _forcegetMongoFuncRepository.CreateAsync(new History<TEntity>
+            {
+                Action = MongoHistoryActionType.AddRange,
+                CreationTime = DateTime.Now,
+                DbObject = entity,
+                PrimaryRefId = ReflectionHelper.GetPropertyValue(entity, "RefId")
+            });
+
+        return addedEntities;
     }
 
     public async Task<TEntity> UpdateAsync(TEntity entity)
     {
         _dbSet.Update(entity);
         await _context.SaveChangesAsync();
+
+        await _forcegetMongoFuncRepository.CreateAsync(new History<TEntity>
+        {
+            Action = MongoHistoryActionType.Update,
+            CreationTime = DateTime.Now,
+            DbObject = entity,
+            PrimaryRefId = ReflectionHelper.GetPropertyValue(entity, "RefId")
+        });
+
         return entity;
     }
 
     public async Task<int> UpdateRangeAsync(IEnumerable<TEntity> entities)
     {
         _dbSet.UpdateRange(entities);
-        return await _context.SaveChangesAsync();
+        var result = await _context.SaveChangesAsync();
+
+        foreach (var entity in entities)
+            await _forcegetMongoFuncRepository.CreateAsync(new History<TEntity>
+            {
+                Action = MongoHistoryActionType.UpdateRange,
+                CreationTime = DateTime.Now,
+                DbObject = entity,
+                PrimaryRefId = ReflectionHelper.GetPropertyValue(entity, "RefId")
+            });
+
+        return result;
     }
 
     public async Task<TEntity> DeleteAsync(TEntity entity)
@@ -56,8 +102,16 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
             (entity as ForcegetBaseEntity).DataStatus = EDataStatus.Deleted;
 
         _dbSet.Update(entity);
-
         await _context.SaveChangesAsync();
+
+        await _forcegetMongoFuncRepository.CreateAsync(new History<TEntity>
+        {
+            Action = MongoHistoryActionType.Delete,
+            CreationTime = DateTime.Now,
+            DbObject = entity,
+            PrimaryRefId = ReflectionHelper.GetPropertyValue(entity, "RefId")
+        });
+
         return entity;
     }
 
@@ -66,7 +120,17 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
         if (hardDelete == true)
         {
             _dbSet.Remove(entity);
+
+            await _forcegetMongoFuncRepository.CreateAsync(new History<TEntity>
+            {
+                Action = MongoHistoryActionType.HardDelete,
+                CreationTime = DateTime.Now,
+                DbObject = entity,
+                PrimaryRefId = ReflectionHelper.GetPropertyValue(entity, "RefId")
+            });
+
             await _context.SaveChangesAsync();
+
             return entity;
         }
 
@@ -79,6 +143,14 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
         {
             if (entity is ForcegetBaseEntity)
                 (entity as ForcegetBaseEntity).DataStatus = EDataStatus.Deleted;
+
+            await _forcegetMongoFuncRepository.CreateAsync(new History<TEntity>
+            {
+                Action = MongoHistoryActionType.DeleteRange,
+                CreationTime = DateTime.Now,
+                DbObject = entity,
+                PrimaryRefId = ReflectionHelper.GetPropertyValue(entity, "RefId")
+            });
         }
 
         _dbSet.UpdateRange(entities);
@@ -91,6 +163,16 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
         if (hardDelete == true)
         {
             _dbSet.RemoveRange(entities);
+
+            foreach (var entity in entities)
+                await _forcegetMongoFuncRepository.CreateAsync(new History<TEntity>
+                {
+                    Action = MongoHistoryActionType.HardDeleteRange,
+                    CreationTime = DateTime.Now,
+                    DbObject = entity,
+                    PrimaryRefId = ReflectionHelper.GetPropertyValue(entity, "RefId")
+                });
+
             return await _context.SaveChangesAsync();
         }
 
@@ -144,4 +226,6 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
             .Skip(model.Skip)
             .Take(model.Take)
             .ToListAsync();
+
+    public async Task<List<History<dynamic>>> GetAllHistory(HistoryRequest model) => await _forcegetMongoFuncRepository.GetHistoriesAsync(model);
 }

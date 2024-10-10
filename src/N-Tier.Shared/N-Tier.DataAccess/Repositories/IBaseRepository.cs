@@ -1,6 +1,8 @@
 ﻿using FS.FilterExpressionCreator.Filters;
 using Microsoft.EntityFrameworkCore.Query;
 using N_Tier.Application.Models;
+using N_Tier.Core.Entities;
+using N_Tier.Shared.N_Tier.Application.Models;
 using N_Tier.Shared.N_Tier.Core.Common;
 using System.Linq.Expressions;
 
@@ -15,6 +17,8 @@ public interface IBaseRepository<TEntity>
     Task<TEntity> GetFirstAsync(Expression<Func<TEntity, bool>> predicate);
 
     Task<List<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>> predicate);
+
+    Task<List<History<dynamic>>> GetAllHistory(HistoryRequest model);
 
     Task<TEntity> AddAsync(TEntity entity);
 
