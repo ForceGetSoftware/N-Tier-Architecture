@@ -1,15 +1,17 @@
 ﻿using FS.FilterExpressionCreator.Filters;
-using Microsoft.EntityFrameworkCore.Query;
-using N_Tier.Application.Models;
 using N_Tier.Core.Entities;
 using N_Tier.Shared.N_Tier.Application.Models;
 using N_Tier.Shared.N_Tier.Core.Common;
 using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace N_Tier.DataAccess.Repositories;
 
 public interface IBaseRepository<TEntity>
 {
+    Task<IDbContextTransaction> BeginTransactionAsync();
+    Task RollbackTransactionAsync();
+    Task CommitTransactionAsync();
     IQueryable<TEntity> AsQueryable();
 
     Task<TEntity> GetFirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate);
@@ -35,12 +37,6 @@ public interface IBaseRepository<TEntity>
     Task<int> DeleteRangeAsync(IEnumerable<TEntity> entities);
 
     Task<int> DeleteRangeAsync(IEnumerable<TEntity> entities, bool hardDelete);
-
-    Task<ApiListResult<List<TResult>>> GetFilteredListAsync<TResult>(
-        Expression<Func<TEntity, TResult>> select, Expression<Func<TEntity, bool>> where,
-        Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
-        Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> include = null,
-        int skip = 0, int take = 10);
 
     Task<int> CountAsync<TEntity>(IQueryable<TEntity> queryable, EntityFilter<TEntity> where);
 
