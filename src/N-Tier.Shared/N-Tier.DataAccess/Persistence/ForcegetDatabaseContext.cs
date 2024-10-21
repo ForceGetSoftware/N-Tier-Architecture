@@ -22,7 +22,7 @@ public class ForcegetDatabaseContext(DbContextOptions options, IClaimService cla
             switch (entry.State)
             {
                 case EntityState.Added:
-                    entry.Entity.RefId = Guid.NewGuid();
+                    //entry.Entity.RefId = Guid.NewGuid();
                     entry.Entity.CreatedBy = Guid.Parse(_claimService.GetUserId());
                     entry.Entity.CreatedOn = DateTime.Now;
                     entry.Entity.DataStatus = Forceget.Enums.EDataStatus.Active;
@@ -40,6 +40,15 @@ public class ForcegetDatabaseContext(DbContextOptions options, IClaimService cla
                     }
                     break;
             }
+
+        foreach (var entry in ChangeTracker.Entries())
+        {
+            if (entry.State == EntityState.Added)
+            {
+                var property = entry.Entity.GetType().GetProperty("RefId");
+                property?.SetValue(entry.Entity, Guid.NewGuid().ToString());
+            }
+        }
 
         return await base.SaveChangesAsync(cancellationToken);
     }
