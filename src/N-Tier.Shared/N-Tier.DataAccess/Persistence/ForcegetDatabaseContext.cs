@@ -46,7 +46,7 @@ public class ForcegetDatabaseContext(DbContextOptions options, IClaimService cla
             if (entry.State == EntityState.Added)
             {
                 var property = entry.Entity.GetType().GetProperty("RefId");
-                property?.SetValue(entry.Entity, Guid.NewGuid().ToString());
+                property?.SetValue(entry.Entity, Guid.NewGuid());
             }
         }
 
