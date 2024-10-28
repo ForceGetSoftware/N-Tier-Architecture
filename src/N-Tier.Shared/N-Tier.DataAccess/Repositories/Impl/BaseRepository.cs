@@ -18,9 +18,9 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
 {
     private readonly DbContext _context;
     private readonly DbSet<TEntity> _dbSet;
-    private readonly IForcegetMongoFuncRepository _forcegetMongoFuncRepository;
+    private readonly IBaseMongoRepository _forcegetMongoFuncRepository;
 
-    protected BaseRepository(DbContext context, IForcegetMongoFuncRepository forcegetMongoFuncRepository)
+    protected BaseRepository(DbContext context, IBaseMongoRepository forcegetMongoFuncRepository)
     {
         _context = context;
         _dbSet = context.Set<TEntity>();
@@ -31,7 +31,7 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
     public async Task RollbackTransactionAsync() => await _context.Database.RollbackTransactionAsync();
     public async Task CommitTransactionAsync() => await _context.Database.CommitTransactionAsync();
     
-    public IQueryable<TEntity> AsQueryable() => _dbSet.AsQueryable();
+    public IQueryable<TEntity> AsQueryable() => _dbSet.AsQueryable().AsNoTracking();
 
     public async Task<TEntity> AddAsync(TEntity entity)
     {
