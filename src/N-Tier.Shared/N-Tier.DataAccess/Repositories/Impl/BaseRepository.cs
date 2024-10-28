@@ -30,7 +30,7 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
     public async Task<IDbContextTransaction> BeginTransactionAsync() => await _context.Database.BeginTransactionAsync();
     public async Task RollbackTransactionAsync() => await _context.Database.RollbackTransactionAsync();
     public async Task CommitTransactionAsync() => await _context.Database.CommitTransactionAsync();
-    
+
     public IQueryable<TEntity> AsQueryable() => _dbSet.AsQueryable().AsNoTracking();
 
     public async Task<TEntity> AddAsync(TEntity entity)
@@ -49,19 +49,18 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
         return addedEntity;
     }
 
-    public async Task<int> AddRangeAsync(IEnumerable<TEntity> entities)
+    public async Task<int> AddRangeAsync(List<TEntity> entities)
     {
         await _dbSet.AddRangeAsync(entities);
         var addedEntities = await _context.SaveChangesAsync();
 
-        foreach (var entity in entities)
-            await _forcegetMongoFuncRepository.CreateAsync(new History<TEntity>
-            {
-                Action = MongoHistoryActionType.AddRange,
-                CreationTime = DateTime.Now,
-                DbObject = entity,
-                PrimaryRefId = ReflectionHelper.GetPropertyValue(entity, "RefId")
-            });
+        await _forcegetMongoFuncRepository.CreateAllAsync<TEntity>(entities.Select(entity => new History<TEntity>
+        {
+            Action = MongoHistoryActionType.AddRange,
+            CreationTime = DateTime.Now,
+            DbObject = entity,
+            PrimaryRefId = ReflectionHelper.GetPropertyValue(entity, "RefId")
+        }).ToList());
 
         return addedEntities;
     }
@@ -82,19 +81,18 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
         return entity;
     }
 
-    public async Task<int> UpdateRangeAsync(IEnumerable<TEntity> entities)
+    public async Task<int> UpdateRangeAsync(List<TEntity> entities)
     {
         _dbSet.UpdateRange(entities);
         var result = await _context.SaveChangesAsync();
 
-        foreach (var entity in entities)
-            await _forcegetMongoFuncRepository.CreateAsync(new History<TEntity>
-            {
-                Action = MongoHistoryActionType.UpdateRange,
-                CreationTime = DateTime.Now,
-                DbObject = entity,
-                PrimaryRefId = ReflectionHelper.GetPropertyValue(entity, "RefId")
-            });
+        await _forcegetMongoFuncRepository.CreateAllAsync(entities.Select(entity => new History<TEntity>
+        {
+            Action = MongoHistoryActionType.UpdateRange,
+            CreationTime = DateTime.Now,
+            DbObject = entity,
+            PrimaryRefId = ReflectionHelper.GetPropertyValue(entity, "RefId")
+        }).ToList());
 
         return result;
     }
@@ -120,66 +118,61 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
 
     public async Task<TEntity> DeleteAsync(TEntity entity, bool hardDelete)
     {
-        if (hardDelete == true)
+        if (hardDelete != true) return await DeleteAsync(entity);
+        _dbSet.Remove(entity);
+
+        await _forcegetMongoFuncRepository.CreateAsync(new History<TEntity>
         {
-            _dbSet.Remove(entity);
+            Action = MongoHistoryActionType.HardDelete,
+            CreationTime = DateTime.Now,
+            DbObject = entity,
+            PrimaryRefId = ReflectionHelper.GetPropertyValue(entity, "RefId")
+        });
 
-            await _forcegetMongoFuncRepository.CreateAsync(new History<TEntity>
-            {
-                Action = MongoHistoryActionType.HardDelete,
-                CreationTime = DateTime.Now,
-                DbObject = entity,
-                PrimaryRefId = ReflectionHelper.GetPropertyValue(entity, "RefId")
-            });
+        await _context.SaveChangesAsync();
 
-            await _context.SaveChangesAsync();
-
-            return entity;
-        }
-
-        return await DeleteAsync(entity);
+        return entity;
     }
 
-    public async Task<int> DeleteRangeAsync(IEnumerable<TEntity> entities)
+    public async Task<int> DeleteRangeAsync(List<TEntity> entities)
     {
-        foreach (var entity in entities)
+        await _forcegetMongoFuncRepository.CreateAllAsync(entities.Select(entity => new History<TEntity>
         {
-            if (entity is ForcegetBaseEntity)
-                (entity as ForcegetBaseEntity).DataStatus = EDataStatus.Deleted;
+            Action = MongoHistoryActionType.DeleteRange,
+            CreationTime = DateTime.Now,
+            DbObject = entity,
+            PrimaryRefId = ReflectionHelper.GetPropertyValue(entity, "RefId")
+        }).ToList());
 
-            await _forcegetMongoFuncRepository.CreateAsync(new History<TEntity>
-            {
-                Action = MongoHistoryActionType.DeleteRange,
-                CreationTime = DateTime.Now,
-                DbObject = entity,
-                PrimaryRefId = ReflectionHelper.GetPropertyValue(entity, "RefId")
-            });
-        }
-
-        _dbSet.UpdateRange(entities);
+        _dbSet.UpdateRange(entities.Select(entity =>
+        {
+            if (entity is ForcegetBaseEntity baseEntity)
+                baseEntity.DataStatus = EDataStatus.Deleted;
+            return entity;
+        }));
 
         return await _context.SaveChangesAsync();
     }
 
-    public async Task<int> DeleteRangeAsync(IEnumerable<TEntity> entities, bool hardDelete)
+    public async Task<int> DeleteRangeAsync(List<TEntity> entities, bool hardDelete)
     {
-        if (hardDelete)
+        if (!hardDelete) return await DeleteRangeAsync(entities);
+        _dbSet.RemoveRange(entities.Select(s =>
         {
-            _dbSet.RemoveRange(entities);
+            if (s is ForcegetBaseEntity baseEntity)
+                baseEntity.DataStatus = EDataStatus.Deleted;
+            return s;
+        }));
 
-            foreach (var entity in entities)
-                await _forcegetMongoFuncRepository.CreateAsync(new History<TEntity>
-                {
-                    Action = MongoHistoryActionType.HardDeleteRange,
-                    CreationTime = DateTime.Now,
-                    DbObject = entity,
-                    PrimaryRefId = ReflectionHelper.GetPropertyValue(entity, "RefId")
-                });
+        await _forcegetMongoFuncRepository.CreateAllAsync(entities.Select(entity => new History<TEntity>
+        {
+            Action = MongoHistoryActionType.HardDeleteRange,
+            CreationTime = DateTime.Now,
+            DbObject = entity,
+            PrimaryRefId = ReflectionHelper.GetPropertyValue(entity, "RefId")
+        }).ToList());
 
-            return await _context.SaveChangesAsync();
-        }
-
-        return await DeleteRangeAsync(entities);
+        return await _context.SaveChangesAsync();
     }
 
     public async Task<List<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>> predicate) =>

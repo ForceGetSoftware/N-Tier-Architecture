@@ -18,4 +18,5 @@ public interface IBaseMongoRepository
     Task RemoveAsync<T>(string primaryRefId);
     Task RemoveAllAsync<T>(Expression<Func<History<T>, bool>> filter);
     Task SaveAsync<T>(string primaryRefId, T element);
+    Task CreateAllAsync<TEntity>(List<History<TEntity>> history) where TEntity : class;
 }

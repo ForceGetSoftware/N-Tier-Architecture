@@ -6,25 +6,17 @@ namespace N_Tier.Shared.Services.Impl;
 
 public class ClaimService(IHttpContextAccessor httpContextAccessor) : IClaimService
 {
-    private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
-
     public string GetUserId() => GetClaim(ClaimTypes.NameIdentifier);
     public string GetRoleGroupTypeId() => GetClaim("RoleGroupTypeId");
 
     public string GetCompanyId()
     {
-        var companyId = GetHeader("CompanyId");
-        if (string.IsNullOrEmpty(companyId))
-        {
-            companyId = GetHeader("Companyid");
-        }
-
-        return companyId;
+        return GetHeader("CompanyId");
     }
 
-    public string GetClaim(string key) => _httpContextAccessor.HttpContext?.User?.FindFirst(key)?.Value;
+    public string GetClaim(string key) => httpContextAccessor.HttpContext?.User?.FindFirst(key)?.Value;
 
-    public string GetAuthorization() => _httpContextAccessor.HttpContext.Request.Headers.Authorization.ToString();
+    public string GetAuthorization() => httpContextAccessor.HttpContext?.Request.Headers.Authorization.ToString();
 
     public bool IsSystemAdmin()
     {
@@ -43,7 +35,7 @@ public class ClaimService(IHttpContextAccessor httpContextAccessor) : IClaimServ
         }
     }
 
-    public string GetHeader(string key) => _httpContextAccessor.HttpContext?.Request.Headers[key].ToString();
+    public string GetHeader(string key) => httpContextAccessor.HttpContext?.Request.Headers[key].ToString();
 
     public List<string> GetClaimList()
     {

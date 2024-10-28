@@ -1,6 +1,9 @@
 ﻿using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.StackExchangeRedis;
 using Microsoft.Extensions.DependencyInjection;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization;
+using MongoDB.Bson.Serialization.Serializers;
 using N_Tier.Application.Helpers;
 using N_Tier.Application.MappingProfiles;
 using N_Tier.DataAccess.Repositories;
@@ -33,6 +36,8 @@ public static class BaseApplicationDependencyInjection
 
     public static IServiceCollection AddForcegetMongo(this IServiceCollection services)
     {
+        BsonSerializer.RegisterSerializer(new GuidSerializer(GuidRepresentation.Standard));
+
         services.AddScoped<IBaseMongoRepository, BaseMongoRepository>();
         return services;
     }
@@ -40,7 +45,7 @@ public static class BaseApplicationDependencyInjection
     public static IServiceCollection AddClaimService(this IServiceCollection services)
     {
         services.AddHttpContextAccessor();
-        services.AddScoped<IClaimService, ClaimService>();
+        services.AddTransient<IClaimService, ClaimService>();
         return services;
     }
     

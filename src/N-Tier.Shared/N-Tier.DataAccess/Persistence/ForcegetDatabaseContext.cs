@@ -7,7 +7,6 @@ namespace N_Tier.DataAccess.Persistence;
 
 public class ForcegetDatabaseContext(DbContextOptions options, IClaimService claimService) : DbContext(options)
 {
-
     protected override void OnModelCreating(ModelBuilder builder)
     {
         builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
@@ -23,19 +22,19 @@ public class ForcegetDatabaseContext(DbContextOptions options, IClaimService cla
                 case EntityState.Added:
                     //entry.Entity.RefId = Guid.NewGuid();
                     entry.Entity.CreatedBy = Guid.Parse(claimService.GetUserId());
-                    entry.Entity.CreatedOn = DateTime.Now;
+                    entry.Entity.CreatedOn = DateTime.Now.ToUniversalTime();
                     entry.Entity.DataStatus = Forceget.Enums.EDataStatus.Active;
                     break;
                 case EntityState.Modified:
                     if (entry.Entity.DataStatus == Forceget.Enums.EDataStatus.Deleted)
                     {
                         entry.Entity.DeletedBy = Guid.Parse(claimService.GetUserId());
-                        entry.Entity.DeletedOn = DateTime.Now;
+                        entry.Entity.DeletedOn = DateTime.Now.ToUniversalTime();
                     }
                     else
                     {
                         entry.Entity.UpdatedBy = Guid.Parse(claimService.GetUserId());
-                        entry.Entity.UpdatedOn = DateTime.Now;
+                        entry.Entity.UpdatedOn = DateTime.Now.ToUniversalTime();
                     }
                     break;
             }

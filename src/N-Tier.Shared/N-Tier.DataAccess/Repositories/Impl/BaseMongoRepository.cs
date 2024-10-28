@@ -172,4 +172,11 @@ public class BaseMongoRepository : IBaseMongoRepository
                 });
         }
     }
+
+    public async Task CreateAllAsync<TEntity>(List<History<TEntity>> item) where TEntity : class
+    {
+        var entityCollection = _mongoDatabase.GetCollection<History<TEntity>>(
+            typeof(TEntity).Name);
+        await entityCollection.InsertManyAsync(item);
+    }
 }

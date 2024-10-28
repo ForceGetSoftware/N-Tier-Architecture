@@ -24,19 +24,19 @@ public interface IBaseRepository<TEntity>
 
     Task<TEntity> AddAsync(TEntity entity);
 
-    Task<int> AddRangeAsync(IEnumerable<TEntity> entities);
+    Task<int> AddRangeAsync(List<TEntity> entities);
 
     Task<TEntity> UpdateAsync(TEntity entity);
 
-    Task<int> UpdateRangeAsync(IEnumerable<TEntity> entities);
+    Task<int> UpdateRangeAsync(List<TEntity> entities);
 
     Task<TEntity> DeleteAsync(TEntity entity);
 
     Task<TEntity> DeleteAsync(TEntity entity, bool hardDelete);
 
-    Task<int> DeleteRangeAsync(IEnumerable<TEntity> entities);
+    Task<int> DeleteRangeAsync(List<TEntity> entities);
 
-    Task<int> DeleteRangeAsync(IEnumerable<TEntity> entities, bool hardDelete);
+    Task<int> DeleteRangeAsync(List<TEntity> entities, bool hardDelete);
 
     Task<int> CountAsync<TEntity>(IQueryable<TEntity> queryable, EntityFilter<TEntity> where);
 
