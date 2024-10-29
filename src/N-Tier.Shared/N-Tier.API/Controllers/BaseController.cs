@@ -12,7 +12,7 @@ public class BaseController<TEntity>(IBaseService<TEntity> service) : ApiControl
     public virtual async Task<IActionResult> GetAllAsync([FromQuery] EntityFilter<TEntity> filter, int take, int skip,
         string search, string orderBy)
     {
-        return Ok(await service.GetAllGenericAsync(new GetAllRequest<TEntity>(filter, take, skip,
+        return Ok(await service.GetAllGenericAsync(new GetAllRequest<TEntity>(filter, skip, take,
             search, orderBy)));
     }
 
