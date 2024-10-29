@@ -22,19 +22,19 @@ public class ForcegetDatabaseContext(DbContextOptions options, IClaimService cla
                 case EntityState.Added:
                     //entry.Entity.RefId = Guid.NewGuid();
                     entry.Entity.CreatedBy = Guid.Parse(claimService.GetUserId());
-                    entry.Entity.CreatedOn = DateTime.Now.ToUniversalTime();
+                    entry.Entity.CreatedOn = DateTime.UtcNow.ToUniversalTime();
                     entry.Entity.DataStatus = Forceget.Enums.EDataStatus.Active;
                     break;
                 case EntityState.Modified:
                     if (entry.Entity.DataStatus == Forceget.Enums.EDataStatus.Deleted)
                     {
                         entry.Entity.DeletedBy = Guid.Parse(claimService.GetUserId());
-                        entry.Entity.DeletedOn = DateTime.Now.ToUniversalTime();
+                        entry.Entity.DeletedOn = DateTime.UtcNow.ToUniversalTime();
                     }
                     else
                     {
                         entry.Entity.UpdatedBy = Guid.Parse(claimService.GetUserId());
-                        entry.Entity.UpdatedOn = DateTime.Now.ToUniversalTime();
+                        entry.Entity.UpdatedOn = DateTime.UtcNow.ToUniversalTime();
                     }
                     break;
             }
