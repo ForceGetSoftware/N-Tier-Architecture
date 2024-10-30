@@ -11,8 +11,8 @@ public class GetAllRequest<TEntity>
     }
     
     public GetAllRequest(EntityFilter<TEntity> filter,
-        int skip,
         int take,
+        int skip,
         string search,
         string orderBy)
     {
