@@ -5,22 +5,22 @@ namespace N_Tier.Application.Helpers
 {
     public static class ExportExcelViaCSV
     {
-        public static FileContentResult GenerateCsv<T>(List<T> data, List<string> headers, string fileName)
+        public static FileContentResult GenerateCsv<T>(List<T> data, Dictionary<string, string> keyValuePairs, string fileName)
         {
             using var stream = new MemoryStream();
             using var writer = new StreamWriter(stream, Encoding.UTF8);
-            var properties = typeof(T).GetProperties();
 
+            var properties = typeof(T).GetProperties().Where(prop => keyValuePairs.ContainsKey(prop.Name)).ToList();
+            var headers = properties.Select(prop => keyValuePairs[prop.Name]);
             writer.WriteLine(string.Join(",", headers));
 
             foreach (var item in data)
             {
-                var values = new List<string>();
-                foreach (var prop in properties)
+                var values = properties.Select(prop =>
                 {
                     var value = prop.GetValue(item)?.ToString() ?? string.Empty;
-                    values.Add(value);
-                }
+                    return $"\"{value}\"";
+                });
                 writer.WriteLine(string.Join(",", values));
             }
 
