@@ -51,6 +51,8 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
 
     public async Task<int> AddRangeAsync(List<TEntity> entities)
     {
+        if(entities.Count == 0) return -1;
+        
         await _dbSet.AddRangeAsync(entities);
         var addedEntities = await _context.SaveChangesAsync();
 
@@ -83,6 +85,7 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
 
     public async Task<int> UpdateRangeAsync(List<TEntity> entities)
     {
+        if(entities.Count == 0) return -1;
         _dbSet.UpdateRange(entities);
         var result = await _context.SaveChangesAsync();
 
@@ -136,6 +139,7 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
 
     public async Task<int> DeleteRangeAsync(List<TEntity> entities)
     {
+        if(entities.Count == 0) return -1;
         await _forcegetMongoFuncRepository.CreateAllAsync(entities.Select(entity => new History<TEntity>
         {
             Action = MongoHistoryActionType.DeleteRange,
@@ -156,6 +160,7 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
 
     public async Task<int> DeleteRangeAsync(List<TEntity> entities, bool hardDelete)
     {
+        if(entities.Count == 0) return -1;
         if (!hardDelete) return await DeleteRangeAsync(entities);
         _dbSet.RemoveRange(entities.Select(s =>
         {
