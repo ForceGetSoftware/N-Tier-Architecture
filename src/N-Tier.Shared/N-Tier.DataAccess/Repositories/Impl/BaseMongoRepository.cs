@@ -22,7 +22,7 @@ public class BaseMongoRepository : IBaseMongoRepository
         _mongoDatabase = _mongoClient.GetDatabase(
             configuration["Mongo:DatabaseName"]);
     }
-    
+
     public BaseMongoRepository(string connectionString, string databaseName)
     {
         _mongoClient = new MongoClient(connectionString);
@@ -60,13 +60,19 @@ public class BaseMongoRepository : IBaseMongoRepository
         if (model.EndDate.HasValue)
             filter = filter.AndAlso(x => x.CreationTime <= model.EndDate.Value);
 
-        var entityCollection = _mongoClient.GetDatabase(model.DatabaseName).GetCollection<History<dynamic>>(model.TableName);
+        var entityCollection = _mongoClient.GetDatabase(model.DatabaseName)
+            .GetCollection<History<dynamic>>(model.TableName);
         var query = entityCollection.Find(filter);
 
-        if (model.OrderBy == OrderBy.Asc)
-            query = query.SortBy(x => x.CreationTime);
-        else
-            query = query.SortByDescending(x => x.CreationTime);
+        query = model.OrderBy == OrderBy.Asc
+            ? query.SortBy(x => x.CreationTime)
+            : query.SortByDescending(x => x.CreationTime);
+        
+        if(model.Skip.HasValue)
+            query = query.Skip(model.Skip.Value);
+        
+        if(model.Take.HasValue)
+            query = query.Limit(model.Take.Value);
 
         return await query.ToListAsync();
     }
@@ -129,7 +135,8 @@ public class BaseMongoRepository : IBaseMongoRepository
             await entityCollection.BulkWriteAsync(session, bulkOps);
             await session.CommitTransactionAsync();
 
-            var bulkWriteResult = await entityCollection.BulkWriteAsync(session, bulkOps, options: new BulkWriteOptions { IsOrdered = false });
+            var bulkWriteResult = await entityCollection.BulkWriteAsync(session, bulkOps,
+                options: new BulkWriteOptions { IsOrdered = false });
 
             return new ReplaceManyResult(bulkWriteResult.MatchedCount, bulkWriteResult.ModifiedCount,
                 bulkWriteResult.Upserts.Count);

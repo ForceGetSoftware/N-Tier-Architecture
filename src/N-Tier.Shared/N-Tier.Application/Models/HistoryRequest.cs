@@ -10,5 +10,7 @@ namespace N_Tier.Shared.N_Tier.Application.Models
         public string DatabaseName { get; set; }
         public string TableName { get; set; }
         public OrderBy OrderBy { get; set; } = OrderBy.Desc;
+        public int? Take { get; set; }
+        public int? Skip { get; set; }
     }
 }
