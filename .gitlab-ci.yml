@@ -12,4 +12,5 @@ deploy:
     - dotnet nuget push "bin/Release/*.nupkg" --source gitlabnuget
   only:
     - main
+    - forceget
   environment: production

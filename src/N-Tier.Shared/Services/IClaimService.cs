@@ -8,4 +8,5 @@ public interface IClaimService
     string GetAuthorization();
     bool IsSystemAdmin();
     string GetRoleGroupTypeId();
+    List<string> GetClaimList();
 }
