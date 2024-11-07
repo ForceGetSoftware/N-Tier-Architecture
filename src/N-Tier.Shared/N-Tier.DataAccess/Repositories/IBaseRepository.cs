@@ -13,7 +13,7 @@ public interface IBaseRepository<TEntity>
     Task RollbackTransactionAsync();
     Task CommitTransactionAsync();
     IQueryable<TEntity> AsQueryable();
-
+    IQueryable<T> AsQueryableTable<T>() where T : class;
     Task<TEntity> GetFirstOrDefaultAsync(Expression<Func<TEntity, bool>> predicate);
 
     Task<TEntity> GetFirstAsync(Expression<Func<TEntity, bool>> predicate);

@@ -32,6 +32,10 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
     public async Task CommitTransactionAsync() => await _context.Database.CommitTransactionAsync();
 
     public IQueryable<TEntity> AsQueryable() => _dbSet.AsQueryable().AsNoTracking();
+    public IQueryable<T> AsQueryableTable<T>() where T : class
+    {
+        return _context.Set<T>().AsQueryable().AsNoTracking();
+    }
 
     public async Task<TEntity> AddAsync(TEntity entity)
     {
