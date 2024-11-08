@@ -3,6 +3,7 @@
 public interface IClaimService
 {
     string GetUserId();
+    Guid GetGuidUserId();
     string GetCompanyId();
     string GetClaim(string key);
     string GetAuthorization();

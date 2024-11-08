@@ -19,27 +19,30 @@ public class ForcegetDatabaseContext(DbContextOptions options, IClaimService cla
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
         foreach (var entry in ChangeTracker.Entries<ForcegetBaseEntity>())
+        {
+            var userId = claimService.GetGuidUserId();
             switch (entry.State)
             {
                 case EntityState.Added:
-                    //entry.Entity.RefId = Guid.NewGuid();
-                    entry.Entity.CreatedBy = Guid.Parse(claimService.GetUserId());
+                    entry.Entity.CreatedBy = userId;
                     entry.Entity.CreatedOn = DateTime.UtcNow.ToUniversalTime();
                     entry.Entity.DataStatus = Forceget.Enums.EDataStatus.Active;
                     break;
                 case EntityState.Modified:
                     if (entry.Entity.DataStatus == Forceget.Enums.EDataStatus.Deleted)
                     {
-                        entry.Entity.DeletedBy = Guid.Parse(claimService.GetUserId());
+                        entry.Entity.DeletedBy = userId;
                         entry.Entity.DeletedOn = DateTime.UtcNow.ToUniversalTime();
                     }
                     else
                     {
-                        entry.Entity.UpdatedBy = Guid.Parse(claimService.GetUserId());
+                        entry.Entity.UpdatedBy = userId;
                         entry.Entity.UpdatedOn = DateTime.UtcNow.ToUniversalTime();
                     }
+
                     break;
             }
+        }
 
         foreach (var entry in ChangeTracker.Entries())
         {
