@@ -36,7 +36,7 @@ public class ClaimService(IHttpContextAccessor httpContextAccessor) : IClaimServ
             var token = jsonToken as JwtSecurityToken;
             return token != null && token.Claims.Any(claim => claim.Value == "System Admin");
         }
-        catch (Exception e)
+        catch 
         {
             return false;
         }

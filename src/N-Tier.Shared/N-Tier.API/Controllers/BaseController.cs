@@ -1,8 +1,8 @@
-﻿using FS.FilterExpressionCreator.Filters;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using N_Tier.Application.Models;
 using N_Tier.Application.Services;
 using N_Tier.Shared.N_Tier.Core.Common;
+using Plainquire.Filter;
 
 namespace N_Tier.API.Controllers;
 

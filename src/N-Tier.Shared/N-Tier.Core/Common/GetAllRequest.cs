@@ -1,5 +1,5 @@
 ﻿using FS.FilterExpressionCreator.Abstractions.Attributes;
-using FS.FilterExpressionCreator.Filters;
+using Plainquire.Filter;
 
 namespace N_Tier.Shared.N_Tier.Core.Common;
 

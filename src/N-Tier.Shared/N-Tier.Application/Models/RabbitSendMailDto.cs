@@ -6,7 +6,7 @@ public class RabbitSendMailDto
     public string email { get; set; }
     public string cc { get; set; }
     public string data { get; set; }
-    public List<RabbitMqAttachment>? attachment { get; set; }
+    public List<RabbitMqAttachment> attachment { get; set; }
 }
 
 public class RabbitMqAttachment

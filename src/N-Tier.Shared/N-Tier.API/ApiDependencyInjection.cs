@@ -1,13 +1,8 @@
-﻿using System.Text;
-using FluentValidation;
+﻿using FluentValidation;
 using FluentValidation.AspNetCore;
 using FS.FilterExpressionCreator.Mvc.Extensions;
 using FS.FilterExpressionCreator.Swashbuckle.Extensions;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using N_Tier.API.Filters;
 using N_Tier.Application.Models.Validators;
@@ -26,30 +21,6 @@ public static class ApiDependencyInjection
         services.AddValidatorsFromAssemblyContaining(typeof(IValidationsMarker));
     }
     
-    public static void AddJwt(this IServiceCollection services, IConfiguration configuration)
-    {
-        var secretKey = configuration.GetValue<string>("JwtConfiguration:SecretKey");
-        
-        var key = Encoding.ASCII.GetBytes(secretKey);
-        
-        services.AddAuthentication(x =>
-            {
-                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-            .AddJwtBearer(x =>
-            {
-                x.RequireHttpsMetadata = false;
-                x.SaveToken = true;
-                x.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(key),
-                    ValidateIssuer = false,
-                    ValidateAudience = false
-                };
-            });
-    }
     
     public static void AddSwagger(this IServiceCollection services, string title, string version)
     {

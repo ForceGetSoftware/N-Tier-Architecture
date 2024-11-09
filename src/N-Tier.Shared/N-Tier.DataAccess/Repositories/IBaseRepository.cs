@@ -1,9 +1,9 @@
-﻿using FS.FilterExpressionCreator.Filters;
-using N_Tier.Core.Entities;
+﻿using N_Tier.Core.Entities;
 using N_Tier.Shared.N_Tier.Application.Models;
 using N_Tier.Shared.N_Tier.Core.Common;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore.Storage;
+using Plainquire.Filter;
 
 namespace N_Tier.DataAccess.Repositories;
 
