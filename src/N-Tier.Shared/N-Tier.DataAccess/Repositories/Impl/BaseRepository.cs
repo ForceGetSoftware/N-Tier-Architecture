@@ -32,6 +32,7 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
     public async Task CommitTransactionAsync() => await _context.Database.CommitTransactionAsync();
 
     public IQueryable<TEntity> AsQueryable() => _dbSet.AsQueryable().AsNoTracking();
+
     public IQueryable<T> AsQueryableTable<T>() where T : class
     {
         return _context.Set<T>().AsQueryable().AsNoTracking();
@@ -55,8 +56,8 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
 
     public async Task<int> AddRangeAsync(List<TEntity> entities)
     {
-        if(entities.Count == 0) return -1;
-        
+        if (entities.Count == 0) return -1;
+
         await _dbSet.AddRangeAsync(entities);
         var addedEntities = await _context.SaveChangesAsync();
 
@@ -89,7 +90,7 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
 
     public async Task<int> UpdateRangeAsync(List<TEntity> entities)
     {
-        if(entities.Count == 0) return -1;
+        if (entities.Count == 0) return -1;
         _dbSet.UpdateRange(entities);
         var result = await _context.SaveChangesAsync();
 
@@ -143,7 +144,7 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
 
     public async Task<int> DeleteRangeAsync(List<TEntity> entities)
     {
-        if(entities.Count == 0) return -1;
+        if (entities.Count == 0) return -1;
         await _forcegetMongoFuncRepository.CreateAllAsync(entities.Select(entity => new History<TEntity>
         {
             Action = MongoHistoryActionType.DeleteRange,
@@ -164,7 +165,7 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
 
     public async Task<int> DeleteRangeAsync(List<TEntity> entities, bool hardDelete)
     {
-        if(entities.Count == 0) return -1;
+        if (entities.Count == 0) return -1;
         if (!hardDelete) return await DeleteRangeAsync(entities);
         _dbSet.RemoveRange(entities.Select(s =>
         {
@@ -201,20 +202,38 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
 
     public async Task<int> CountAsync(GetAllRequest<TEntity> model) => await _dbSet.CountAsync(model.Filter);
 
-    public async Task<List<TEntity>> GetAllGenericAsync(GetAllRequest<TEntity> model) => await _dbSet
-        .Where(model.Filter)
-        .OrderBy(model.OrderBy ?? "Id DESC")
-        .Skip(model.Skip)
-        .Take(model.Take)
-        .ToListAsync();
-
-    public async Task<List<TEntity>> GetAllGenericAsync<TEntity>(IQueryable<TEntity> queryable,
-        GetAllRequest<TEntity> model) =>
-        await queryable.Where(model.Filter)
-            .OrderBy(model.OrderBy ?? "Id DESC")
+    public async Task<List<TEntity>> GetAllGenericAsync(GetAllRequest<TEntity> model)
+    {
+        return await _dbSet
+            .Where(model.Filter)
+            .OrderBy(model.OrderBy)
             .Skip(model.Skip)
             .Take(model.Take)
             .ToListAsync();
+    }
+
+    public async Task<List<TEntity>> GetAllGenericAsync<TEntity>(IQueryable<TEntity> queryable,
+        GetAllRequest<TEntity> model)
+    {
+        queryable = queryable.Where(model.Filter);
+        if (string.IsNullOrEmpty(model.OrderBy))
+        {
+             if (typeof(TEntity).GetProperty("CreatedOn") != null)
+                model.OrderBy = "CreatedOn DESC";
+            else if (typeof(TEntity).GetProperty("Id") != null)
+                model.OrderBy = "Id DESC";
+            else if (typeof(TEntity).GetProperty("RefId") != null)
+                model.OrderBy = "RefId DESC";
+        }
+
+        if (!string.IsNullOrEmpty(model.OrderBy))
+            queryable = queryable.OrderBy(model.OrderBy);
+
+        return await queryable
+            .Skip(model.Skip)
+            .Take(model.Take)
+            .ToListAsync();
+    }
 
     public async Task<List<History<dynamic>>> GetAllHistory(HistoryRequest model) =>
         await _forcegetMongoFuncRepository.GetHistoriesAsync(model);
