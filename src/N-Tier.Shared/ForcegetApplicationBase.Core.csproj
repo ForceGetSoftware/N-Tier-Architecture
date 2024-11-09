@@ -13,13 +13,13 @@
         <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="8.0.10" />
         <PackageReference Include="MongoDB.Driver" Version="2.30.0" />
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.10" />
+        <PackageReference Include="Plainquire.Filter" Version="6.1.0" />
+        <PackageReference Include="Plainquire.Filter.Mvc" Version="6.1.0" />
+        <PackageReference Include="Plainquire.Filter.Swashbuckle" Version="6.1.0" />
         <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="8.0.2" />
         <PackageReference Include="RabbitMQ.Client" Version="6.8.1" />
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.10" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-        <PackageReference Include="Schick.FilterExpressionCreator" Version="4.7.0" />
-        <PackageReference Include="Schick.FilterExpressionCreator.Mvc" Version="4.7.0" />
-        <PackageReference Include="Schick.FilterExpressionCreator.Swashbuckle" Version="4.7.0" />
         <PackageReference Include="StackExchange.Redis" Version="2.8.16" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.9.0" />
         <PackageReference Include="AutoMapper" Version="13.0.1" />

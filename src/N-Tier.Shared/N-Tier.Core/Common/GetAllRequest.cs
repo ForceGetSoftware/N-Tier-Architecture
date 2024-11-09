@@ -1,9 +1,7 @@
-﻿using FS.FilterExpressionCreator.Abstractions.Attributes;
-using Plainquire.Filter;
+﻿using Plainquire.Filter;
 
 namespace N_Tier.Shared.N_Tier.Core.Common;
 
-[EntityFilterSet]
 public class GetAllRequest<TEntity>
 {
     public EntityFilter<TEntity> Filter { get; set; }

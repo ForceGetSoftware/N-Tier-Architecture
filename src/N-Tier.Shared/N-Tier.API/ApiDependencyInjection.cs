@@ -1,11 +1,11 @@
 ﻿using FluentValidation;
 using FluentValidation.AspNetCore;
-using FS.FilterExpressionCreator.Mvc.Extensions;
-using FS.FilterExpressionCreator.Swashbuckle.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using N_Tier.API.Filters;
 using N_Tier.Application.Models.Validators;
+using Plainquire.Filter.Mvc;
+using Plainquire.Filter.Swashbuckle;
 
 namespace N_Tier.API;
 
@@ -15,7 +15,7 @@ public static class ApiDependencyInjection
     {
         services.AddControllers(
             config => config.Filters.Add(typeof(ValidateModelAttribute))
-        ).AddFilterExpressionSupport();
+        ).AddFilterSupport();
         
         services.AddFluentValidationAutoValidation();
         services.AddValidatorsFromAssemblyContaining(typeof(IValidationsMarker));
@@ -36,7 +36,7 @@ public static class ApiDependencyInjection
                 Scheme = "Bearer"
             });
             
-            s.AddFilterExpressionSupport();
+            s.AddFilterSupport();
             
             s.AddSecurityRequirement(new OpenApiSecurityRequirement
             {
