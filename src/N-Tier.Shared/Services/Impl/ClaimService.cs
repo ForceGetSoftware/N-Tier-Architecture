@@ -7,6 +7,7 @@ namespace N_Tier.Shared.Services.Impl;
 public class ClaimService(IHttpContextAccessor httpContextAccessor) : IClaimService
 {
     public string GetUserId() => GetClaim("nameid");
+
     public Guid GetGuidUserId()
     {
         if (!Guid.TryParse(GetUserId(), out var userId))
@@ -23,17 +24,14 @@ public class ClaimService(IHttpContextAccessor httpContextAccessor) : IClaimServ
 
     public string GetClaim(string key)
     {
-        var result = httpContextAccessor.HttpContext?.User?.FindFirst(key);
-        if (result == null)
-        {
-            var response = GetJwtToken().Claims.FirstOrDefault(claim => claim.Type == key);
-            if(response != null)
-            return response?.Value;
-        }
-        else
-        {
-            return result.Value;
-        }
+        var result = GetJwtToken().Claims.Where(claim => claim.Type == key).Select(s => s.Value).FirstOrDefault();
+        if (string.IsNullOrEmpty(result))
+            return result;
+
+        result = httpContextAccessor.HttpContext?.User?.FindFirstValue(key);
+
+        if (!string.IsNullOrEmpty(result))
+            return result;
 
         throw new Exception(key + " not found");
     }
@@ -49,6 +47,7 @@ public class ClaimService(IHttpContextAccessor httpContextAccessor) : IClaimServ
         var token = jsonToken as JwtSecurityToken;
         return token;
     }
+
     public bool IsSystemAdmin()
     {
         try
@@ -56,7 +55,7 @@ public class ClaimService(IHttpContextAccessor httpContextAccessor) : IClaimServ
             var token = GetJwtToken();
             return token != null && token.Claims.Any(claim => claim.Value == "System Admin");
         }
-        catch 
+        catch
         {
             return false;
         }
