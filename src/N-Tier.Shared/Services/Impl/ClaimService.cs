@@ -6,7 +6,7 @@ namespace N_Tier.Shared.Services.Impl;
 
 public class ClaimService(IHttpContextAccessor httpContextAccessor) : IClaimService
 {
-    public string GetUserId() => GetClaim(ClaimTypes.NameIdentifier);
+    public string GetUserId() => GetClaim("nameid");
     public Guid GetGuidUserId()
     {
         if (!Guid.TryParse(GetUserId(), out var userId))
