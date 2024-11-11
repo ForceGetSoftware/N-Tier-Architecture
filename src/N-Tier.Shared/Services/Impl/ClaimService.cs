@@ -23,13 +23,19 @@ public class ClaimService(IHttpContextAccessor httpContextAccessor) : IClaimServ
 
     public string GetClaim(string key)
     {
-        var result = httpContextAccessor.HttpContext?.User?.FindFirst(key)?.Value;
+        var result = httpContextAccessor.HttpContext?.User?.FindFirst(key);
         if (result == null)
         {
-            result =GetJwtToken().Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.NameIdentifier)?.Value;
+            var response = GetJwtToken().Claims.FirstOrDefault(claim => claim.Type == key);
+            if(response != null)
+            return response?.Value;
+        }
+        else
+        {
+            return result.Value;
         }
 
-        return result;
+        throw new Exception(key + " not found");
     }
 
     public string GetAuthorization() => httpContextAccessor.HttpContext?.Request.Headers.Authorization.ToString();
