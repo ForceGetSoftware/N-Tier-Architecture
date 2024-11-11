@@ -25,7 +25,7 @@ public class ClaimService(IHttpContextAccessor httpContextAccessor) : IClaimServ
     public string GetClaim(string key)
     {
         var result = GetJwtToken().Claims.Where(claim => claim.Type == key).Select(s => s.Value).FirstOrDefault();
-        if (string.IsNullOrEmpty(result))
+        if (!string.IsNullOrEmpty(result))
             return result;
 
         result = httpContextAccessor.HttpContext?.User?.FindFirstValue(key);
