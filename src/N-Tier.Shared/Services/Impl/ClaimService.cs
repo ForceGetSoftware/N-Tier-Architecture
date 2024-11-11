@@ -21,19 +21,33 @@ public class ClaimService(IHttpContextAccessor httpContextAccessor) : IClaimServ
         return GetHeader("CompanyId");
     }
 
-    public string GetClaim(string key) => httpContextAccessor.HttpContext?.User?.FindFirst(key)?.Value;
+    public string GetClaim(string key)
+    {
+        var result = httpContextAccessor.HttpContext?.User?.FindFirst(key)?.Value;
+        if (result == null)
+        {
+            result =GetJwtToken().Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.NameIdentifier)?.Value;
+        }
+
+        return result;
+    }
 
     public string GetAuthorization() => httpContextAccessor.HttpContext?.Request.Headers.Authorization.ToString();
 
+    public JwtSecurityToken GetJwtToken()
+    {
+        const string bearerPrefix = "Bearer ";
+        var authToken = GetAuthorization().Substring(bearerPrefix.Length);
+        var handler = new JwtSecurityTokenHandler();
+        var jsonToken = handler.ReadToken(authToken);
+        var token = jsonToken as JwtSecurityToken;
+        return token;
+    }
     public bool IsSystemAdmin()
     {
         try
         {
-            const string bearerPrefix = "Bearer ";
-            var authToken = GetAuthorization().Substring(bearerPrefix.Length);
-            var handler = new JwtSecurityTokenHandler();
-            var jsonToken = handler.ReadToken(authToken);
-            var token = jsonToken as JwtSecurityToken;
+            var token = GetJwtToken();
             return token != null && token.Claims.Any(claim => claim.Value == "System Admin");
         }
         catch 

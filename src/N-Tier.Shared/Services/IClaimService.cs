@@ -1,4 +1,6 @@
-﻿namespace N_Tier.Shared.Services;
+﻿using System.IdentityModel.Tokens.Jwt;
+
+namespace N_Tier.Shared.Services;
 
 public interface IClaimService
 {
@@ -10,4 +12,5 @@ public interface IClaimService
     bool IsSystemAdmin();
     string GetRoleGroupTypeId();
     List<string> GetClaimList();
+    JwtSecurityToken GetJwtToken();
 }
