@@ -21,3 +21,10 @@
       .AddForcegetRedisCache(builder.Configuration["Redis"]);
   ```
 
+## Version 8.2.x > 8.2.8.2.5806
+
+- Replace All Files in  ``using FS.FilterExpressionCreator.Filters;`` to `using Plainquire.Filter;`
+- Remove line `builder.Services.AddJwt(builder.Configuration);`
+- Remove line `app.UseAuthentication();`
+- Remove line `app.UseAuthorization();`
+- Remove line `[Authorize]`
