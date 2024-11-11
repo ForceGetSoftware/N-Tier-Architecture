@@ -13,23 +13,25 @@ public class BaseRedisRepository(IDistributedCache distributedCache) : IBaseRedi
     public async Task<T> GetAsync<T>(string key) where T : class
     {
         var result = await distributedCache.GetStringAsync(key);
-        if(string.IsNullOrEmpty(result)) throw new KeyNotFoundException();
-        return JsonSerializer.Deserialize<T>(result);
+        return string.IsNullOrEmpty(result) ? null : JsonSerializer.Deserialize<T>(result);
     }
 
     public Task SetStringAsync(string key, string value, TimeSpan? absoluteExpirationRelativeToNow)
     {
         return distributedCache
             .SetStringAsync(key, value,
-            new DistributedCacheEntryOptions() { AbsoluteExpirationRelativeToNow = absoluteExpirationRelativeToNow });
+                new DistributedCacheEntryOptions()
+                    { AbsoluteExpirationRelativeToNow = absoluteExpirationRelativeToNow });
     }
 
     public Task SetAsync<T>(string key, T value, TimeSpan? absoluteExpirationRelativeToNow) where T : class
     {
         return distributedCache
             .SetStringAsync(key, JsonSerializer.Serialize(value),
-                new DistributedCacheEntryOptions() { AbsoluteExpirationRelativeToNow = absoluteExpirationRelativeToNow });
+                new DistributedCacheEntryOptions()
+                    { AbsoluteExpirationRelativeToNow = absoluteExpirationRelativeToNow });
     }
+
     public Task RemoveAsync(string key)
     {
         return distributedCache
