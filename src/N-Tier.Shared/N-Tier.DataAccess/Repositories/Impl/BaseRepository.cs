@@ -204,9 +204,21 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
 
     public async Task<List<TEntity>> GetAllGenericAsync(GetAllRequest<TEntity> model)
     {
-        return await _dbSet
-            .Where(model.Filter)
-            .OrderBy(model.OrderBy ?? "Id DESC")
+        var queryable = _dbSet.Where(model.Filter);
+        if (string.IsNullOrEmpty(model.OrderBy))
+        {
+            if (typeof(TEntity).GetProperty("CreatedOn") != null)
+                model.OrderBy = "CreatedOn DESC";
+            else if (typeof(TEntity).GetProperty("Id") != null)
+                model.OrderBy = "Id DESC";
+            else if (typeof(TEntity).GetProperty("RefId") != null)
+                model.OrderBy = "RefId DESC";
+        }
+        
+        if (!string.IsNullOrEmpty(model.OrderBy))
+            queryable = queryable.OrderBy(model.OrderBy);
+        
+        return await queryable
             .Skip(model.Skip)
             .Take(model.Take)
             .ToListAsync();
