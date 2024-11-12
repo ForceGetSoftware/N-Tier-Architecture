@@ -206,7 +206,7 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
     {
         return await _dbSet
             .Where(model.Filter)
-            .OrderBy(model.OrderBy)
+            .OrderBy(model.OrderBy ?? "Id DESC")
             .Skip(model.Skip)
             .Take(model.Take)
             .ToListAsync();
@@ -218,14 +218,14 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
         queryable = queryable.Where(model.Filter);
         if (string.IsNullOrEmpty(model.OrderBy))
         {
-             if (typeof(TEntity).GetProperty("CreatedOn") != null)
+            if (typeof(TEntity).GetProperty("CreatedOn") != null)
                 model.OrderBy = "CreatedOn DESC";
             else if (typeof(TEntity).GetProperty("Id") != null)
                 model.OrderBy = "Id DESC";
             else if (typeof(TEntity).GetProperty("RefId") != null)
                 model.OrderBy = "RefId DESC";
         }
-
+        
         if (!string.IsNullOrEmpty(model.OrderBy))
             queryable = queryable.OrderBy(model.OrderBy);
 
