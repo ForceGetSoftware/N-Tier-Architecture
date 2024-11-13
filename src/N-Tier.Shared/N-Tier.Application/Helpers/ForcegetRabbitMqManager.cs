@@ -8,26 +8,19 @@ namespace N_Tier.Application.Helpers;
 
 public interface IForcegetRabbitMqManager
 {
-    bool Send(string queue, string message);
-    bool SendMail(RabbitSendMailDto data);
+    Task<bool> Send(string queue, string message);
+    Task<bool> SendMail(RabbitSendMailDto data);
 }
 
-public class ForcegetRabbitMqManager : IForcegetRabbitMqManager
+public class ForcegetRabbitMqManager(IConfiguration configuration) : IForcegetRabbitMqManager
 {
-    private readonly IConfiguration configuration;
-    
-    public ForcegetRabbitMqManager(IConfiguration configuration)
-    {
-        this.configuration = configuration;
-    }
-    
-    public bool Send(string queue, string message)
+    public async Task<bool> Send(string queue, string message)
     {
         var factory = new ConnectionFactory { HostName = configuration["RabbitMq"] };
-        using var connection = factory.CreateConnection();
-        using var channel = connection.CreateModel();
+        await using var connection = await factory.CreateConnectionAsync();
+        await using var channel =await connection.CreateChannelAsync();
         
-        channel.QueueDeclare(queue,
+        await channel.QueueDeclareAsync(queue,
             false,
             false,
             false,
@@ -35,33 +28,27 @@ public class ForcegetRabbitMqManager : IForcegetRabbitMqManager
         
         var body = Encoding.UTF8.GetBytes(message);
         
-        channel.BasicPublish(string.Empty,
-            queue,
-            null,
-            body);
+        await channel.BasicPublishAsync(string.Empty, queue,body: body);
         
         return true;
     }
     
-    public bool SendMail(RabbitSendMailDto data)
+    public async Task<bool> SendMail(RabbitSendMailDto data)
     {
         var factory = new ConnectionFactory { HostName = configuration["RabbitMq"] };
-        using var connection = factory.CreateConnection();
-        using var channel = connection.CreateModel();
-
-        const string queue = "mail";
-        channel.QueueDeclare(queue,
+        await using var connection = await factory.CreateConnectionAsync();
+        await using var channel =await connection.CreateChannelAsync();
+        var queue = "mail";
+        await channel.QueueDeclareAsync(queue,
             false,
             false,
             false,
             null);
-        
+
         var body = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(data));
         
-        channel.BasicPublish(string.Empty,
-            queue,
-            null,
-            body);
+        await channel.BasicPublishAsync(string.Empty, queue,body: body);
+
         
         return true;
     }
