@@ -77,6 +77,6 @@ public static class ApiDependencyInjection
         AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
         services.AddDbContextPool<TAppDatabaseContext>(options =>
-            options.UseNpgsql(databaseConfig.ConnectionString));
+            options.UseNpgsql(databaseConfig.ConnectionString).EnableDetailedErrors().EnableSensitiveDataLogging().EnableServiceProviderCaching());
     }
 }
