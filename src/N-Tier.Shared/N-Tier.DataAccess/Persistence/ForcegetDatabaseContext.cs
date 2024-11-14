@@ -9,8 +9,6 @@ public class ForcegetDatabaseContext(DbContextOptions options, IClaimService cla
 {
     protected override void OnModelCreating(ModelBuilder builder)
     {
-        AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
-
         builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 
         base.OnModelCreating(builder);

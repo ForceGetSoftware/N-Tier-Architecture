@@ -1,5 +1,8 @@
 ﻿using FluentValidation;
 using FluentValidation.AspNetCore;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using N_Tier.API.Filters;
@@ -16,12 +19,12 @@ public static class ApiDependencyInjection
         services.AddControllers(
             config => config.Filters.Add(typeof(ValidateModelAttribute))
         ).AddFilterSupport();
-        
+
         services.AddFluentValidationAutoValidation();
         services.AddValidatorsFromAssemblyContaining(typeof(IValidationsMarker));
     }
-    
-    
+
+
     public static void AddSwagger(this IServiceCollection services, string title, string version)
     {
         services.AddSwaggerGen(s =>
@@ -35,9 +38,9 @@ public static class ApiDependencyInjection
                 Type = SecuritySchemeType.ApiKey,
                 Scheme = "Bearer"
             });
-            
+
             s.AddFilterSupport();
-            
+
             s.AddSecurityRequirement(new OpenApiSecurityRequirement
             {
                 {
@@ -53,5 +56,27 @@ public static class ApiDependencyInjection
                 }
             });
         });
+    }
+
+
+    private static void AddDatabase<TAppDatabaseContext>(this IServiceCollection services, IConfiguration configuration)
+        where TAppDatabaseContext : DbContext
+    {
+        var databaseConfig = configuration.GetSection("Database").Get<DatabaseConfiguration>();
+
+        if (databaseConfig.UseInMemoryDatabase)
+        {
+            services.AddDbContext<TAppDatabaseContext>(options =>
+            {
+                options.UseInMemoryDatabase("NTierDatabase");
+                options.ConfigureWarnings(x => x.Ignore(InMemoryEventId.TransactionIgnoredWarning));
+            });
+            return;
+        }
+
+        AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
+        services.AddDbContextPool<TAppDatabaseContext>(options =>
+            options.UseNpgsql(databaseConfig.ConnectionString));
     }
 }
