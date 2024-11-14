@@ -59,7 +59,7 @@ public static class ApiDependencyInjection
     }
 
 
-    private static void AddDatabase<TAppDatabaseContext>(this IServiceCollection services, IConfiguration configuration)
+    public static void AddDatabase<TAppDatabaseContext>(this IServiceCollection services, IConfiguration configuration)
         where TAppDatabaseContext : DbContext
     {
         var databaseConfig = configuration.GetSection("Database").Get<DatabaseConfiguration>();
