@@ -40,9 +40,12 @@ public class ClaimService(IHttpContextAccessor httpContextAccessor) : IClaimServ
 
     public JwtSecurityToken GetJwtToken()
     {
+        var auth = GetAuthorization();
+        if(string.IsNullOrEmpty(auth)) return new JwtSecurityToken();
         const string bearerPrefix = "Bearer ";
-        var authToken = GetAuthorization().Substring(bearerPrefix.Length);
+        var authToken = auth.Substring(bearerPrefix.Length);
         var handler = new JwtSecurityTokenHandler();
+        if(!handler.CanReadToken(authToken)) return new JwtSecurityToken();
         var jsonToken = handler.ReadToken(authToken);
         var token = jsonToken as JwtSecurityToken;
         return token;
