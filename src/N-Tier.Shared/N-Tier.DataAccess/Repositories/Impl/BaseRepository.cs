@@ -48,7 +48,7 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
             Action = MongoHistoryActionType.Add,
             CreationTime = DateTime.Now,
             DbObject = addedEntity,
-            PrimaryRefId = ReflectionHelper.GetPropertyValue(addedEntity, "RefId")
+            PrimaryRefId = ReflectionHelper.GetPropertyValue(addedEntity, "refid")
         });
 
         return addedEntity;
@@ -66,7 +66,7 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
             Action = MongoHistoryActionType.AddRange,
             CreationTime = DateTime.Now,
             DbObject = entity,
-            PrimaryRefId = ReflectionHelper.GetPropertyValue(entity, "RefId")
+            PrimaryRefId = ReflectionHelper.GetPropertyValue(entity, "refid")
         }).ToList());
 
         return addedEntities;
@@ -82,7 +82,7 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
             Action = MongoHistoryActionType.Update,
             CreationTime = DateTime.Now,
             DbObject = entity,
-            PrimaryRefId = ReflectionHelper.GetPropertyValue(entity, "RefId")
+            PrimaryRefId = ReflectionHelper.GetPropertyValue(entity, "refid")
         });
 
         return entity;
@@ -99,7 +99,7 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
             Action = MongoHistoryActionType.UpdateRange,
             CreationTime = DateTime.Now,
             DbObject = entity,
-            PrimaryRefId = ReflectionHelper.GetPropertyValue(entity, "RefId")
+            PrimaryRefId = ReflectionHelper.GetPropertyValue(entity, "refid")
         }).ToList());
 
         return result;
@@ -118,7 +118,7 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
             Action = MongoHistoryActionType.Delete,
             CreationTime = DateTime.Now,
             DbObject = entity,
-            PrimaryRefId = ReflectionHelper.GetPropertyValue(entity, "RefId")
+            PrimaryRefId = ReflectionHelper.GetPropertyValue(entity, "refid")
         });
 
         return entity;
@@ -134,7 +134,7 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
             Action = MongoHistoryActionType.HardDelete,
             CreationTime = DateTime.Now,
             DbObject = entity,
-            PrimaryRefId = ReflectionHelper.GetPropertyValue(entity, "RefId")
+            PrimaryRefId = ReflectionHelper.GetPropertyValue(entity, "refid")
         });
 
         await _context.SaveChangesAsync();
@@ -150,7 +150,7 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
             Action = MongoHistoryActionType.DeleteRange,
             CreationTime = DateTime.Now,
             DbObject = entity,
-            PrimaryRefId = ReflectionHelper.GetPropertyValue(entity, "RefId")
+            PrimaryRefId = ReflectionHelper.GetPropertyValue(entity, "refid")
         }).ToList());
 
         _dbSet.UpdateRange(entities.Select(entity =>
@@ -179,7 +179,7 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
             Action = MongoHistoryActionType.HardDeleteRange,
             CreationTime = DateTime.Now,
             DbObject = entity,
-            PrimaryRefId = ReflectionHelper.GetPropertyValue(entity, "RefId")
+            PrimaryRefId = ReflectionHelper.GetPropertyValue(entity, "refid")
         }).ToList());
 
         return await _context.SaveChangesAsync();
@@ -211,7 +211,7 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
                 model.OrderBy = "CreatedOn DESC";
             else if (typeof(TEntity).GetProperty("Id") != null)
                 model.OrderBy = "Id DESC";
-            else if (typeof(TEntity).GetProperty("RefId") != null)
+            else if (typeof(TEntity).GetProperty("refid") != null)
                 model.OrderBy = "RefId DESC";
         }
         
@@ -234,7 +234,7 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
                 model.OrderBy = "CreatedOn DESC";
             else if (typeof(TEntity).GetProperty("Id") != null)
                 model.OrderBy = "Id DESC";
-            else if (typeof(TEntity).GetProperty("RefId") != null)
+            else if (typeof(TEntity).GetProperty("refid") != null)
                 model.OrderBy = "RefId DESC";
         }
         
