@@ -22,20 +22,20 @@ public class ForcegetDatabaseContext(DbContextOptions options, IClaimService cla
             switch (entry.State)
             {
                 case EntityState.Added:
-                    entry.Entity.CreatedBy = userId;
-                    entry.Entity.CreatedOn = DateTime.UtcNow.ToUniversalTime();
-                    entry.Entity.DataStatus = Forceget.Enums.EDataStatus.Active;
+                    entry.Entity.createdby = userId;
+                    entry.Entity.createdon = DateTime.UtcNow.ToUniversalTime();
+                    entry.Entity.datastatus = Forceget.Enums.EDataStatus.Active;
                     break;
                 case EntityState.Modified:
-                    if (entry.Entity.DataStatus == Forceget.Enums.EDataStatus.Deleted)
+                    if (entry.Entity.datastatus == Forceget.Enums.EDataStatus.Deleted)
                     {
-                        entry.Entity.DeletedBy = userId;
-                        entry.Entity.DeletedOn = DateTime.UtcNow.ToUniversalTime();
+                        entry.Entity.deletedby = userId;
+                        entry.Entity.deletedon = DateTime.UtcNow.ToUniversalTime();
                     }
                     else
                     {
-                        entry.Entity.UpdatedBy = userId;
-                        entry.Entity.UpdatedOn = DateTime.UtcNow.ToUniversalTime();
+                        entry.Entity.updatedby = userId;
+                        entry.Entity.updatedon = DateTime.UtcNow.ToUniversalTime();
                     }
 
                     break;
@@ -46,7 +46,7 @@ public class ForcegetDatabaseContext(DbContextOptions options, IClaimService cla
         {
             if (entry.State == EntityState.Added)
             {
-                var property = entry.Entity.GetType().GetProperty("RefId");
+                var property = entry.Entity.GetType().GetProperty("refid");
                 property?.SetValue(entry.Entity, Guid.NewGuid());
             }
         }

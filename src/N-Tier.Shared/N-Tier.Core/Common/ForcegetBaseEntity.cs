@@ -1,28 +1,21 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Forceget.Enums;
+using Plainquire.Filter.Abstractions;
 
 namespace N_Tier.Core.Common;
 
+[EntityFilter(Prefix = "")]
 public abstract class ForcegetBaseEntity : BaseEntity
 {
-    [Column("id")]
-    [Key] public int Id { get; set; }
+    [Key] public int id { get; set; }
     
-    [Column("refid")]
-    public Guid RefId { get; set; }
-    [Column("createdby")]
-    public Guid CreatedBy { get; set; }
-    [Column("createdon")]
-    public DateTime CreatedOn { get; set; }
-    [Column("updatedby")]
-    public Guid? UpdatedBy { get; set; }
-    [Column("updatedon")]
-    public DateTime? UpdatedOn { get; set; }
-    [Column("deletedby")]
-    public Guid? DeletedBy { get; set; }
-    [Column("deletedon")]
-    public DateTime? DeletedOn { get; set; }
-    [Column("datastatus")]
-    public EDataStatus DataStatus { get; set; } = EDataStatus.Active;
+    public Guid refid { get; set; }
+    public Guid createdby { get; set; }
+    public DateTime createdon { get; set; }
+    public Guid? updatedby { get; set; }
+    public DateTime? updatedon { get; set; }
+    public Guid? deletedby { get; set; }
+    public DateTime? deletedon { get; set; }
+    public EDataStatus datastatus { get; set; } = EDataStatus.Active;
 }

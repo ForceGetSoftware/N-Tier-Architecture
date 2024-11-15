@@ -108,7 +108,7 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
     public async Task<TEntity> DeleteAsync(TEntity entity)
     {
         if (entity is ForcegetBaseEntity baseEntity)
-            baseEntity.DataStatus = EDataStatus.Deleted;
+            baseEntity.datastatus = EDataStatus.Deleted;
 
         _dbSet.Update(entity);
         await _context.SaveChangesAsync();
@@ -156,7 +156,7 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
         _dbSet.UpdateRange(entities.Select(entity =>
         {
             if (entity is ForcegetBaseEntity baseEntity)
-                baseEntity.DataStatus = EDataStatus.Deleted;
+                baseEntity.datastatus = EDataStatus.Deleted;
             return entity;
         }));
 
@@ -170,7 +170,7 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
         _dbSet.RemoveRange(entities.Select(s =>
         {
             if (s is ForcegetBaseEntity baseEntity)
-                baseEntity.DataStatus = EDataStatus.Deleted;
+                baseEntity.datastatus = EDataStatus.Deleted;
             return s;
         }));
 
