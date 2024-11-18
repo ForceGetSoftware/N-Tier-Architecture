@@ -207,12 +207,12 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
         var queryable = _dbSet.Where(model.Filter);
         if (string.IsNullOrEmpty(model.OrderBy))
         {
-            if (typeof(TEntity).GetProperty("CreatedOn") != null)
-                model.OrderBy = "CreatedOn DESC";
-            else if (typeof(TEntity).GetProperty("Id") != null)
-                model.OrderBy = "Id DESC";
+            if (typeof(TEntity).GetProperty("createdon") != null)
+                model.OrderBy = "createdon DESC";
             else if (typeof(TEntity).GetProperty("refid") != null)
-                model.OrderBy = "RefId DESC";
+                model.OrderBy = "refid DESC";
+            else
+                model.OrderBy = "id DESC";
         }
         
         if (!string.IsNullOrEmpty(model.OrderBy))
@@ -230,12 +230,12 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
         queryable = queryable.Where(model.Filter);
         if (string.IsNullOrEmpty(model.OrderBy))
         {
-            if (typeof(TEntity).GetProperty("CreatedOn") != null)
-                model.OrderBy = "CreatedOn DESC";
-            else if (typeof(TEntity).GetProperty("Id") != null)
-                model.OrderBy = "Id DESC";
+            if (typeof(TEntity).GetProperty("createdon") != null)
+                model.OrderBy = "createdon DESC";
             else if (typeof(TEntity).GetProperty("refid") != null)
-                model.OrderBy = "RefId DESC";
+                model.OrderBy = "refid DESC";
+            else
+                model.OrderBy = "id DESC";
         }
         
         if (!string.IsNullOrEmpty(model.OrderBy))
