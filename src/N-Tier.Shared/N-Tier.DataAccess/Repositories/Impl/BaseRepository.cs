@@ -9,7 +9,11 @@ using N_Tier.Shared.N_Tier.Application.Models;
 using N_Tier.Shared.N_Tier.Core.Common;
 using System.Linq.Dynamic.Core;
 using System.Linq.Expressions;
+using Auth.Application.Models.Account;
+using Auth.Core.Entities;
 using Microsoft.EntityFrameworkCore.Storage;
+using N_Tier.Shared.N_Tier.DataAccess.Models;
+using N_Tier.Shared.Services;
 using Plainquire.Filter;
 
 namespace N_Tier.DataAccess.Repositories.Impl;
@@ -18,13 +22,18 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
 {
     private readonly DbContext _context;
     private readonly DbSet<TEntity> _dbSet;
-    private readonly IBaseMongoRepository _forcegetMongoFuncRepository;
+    private readonly IBaseMongoRepository _baseMongoRepository;
+    private readonly IBaseRedisRepository _baseRedisRepository;
+    private readonly IClaimService _claimService;
 
-    protected BaseRepository(DbContext context, IBaseMongoRepository forcegetMongoFuncRepository)
+    protected BaseRepository(DbContext context, IBaseMongoRepository baseMongoRepository,
+        IBaseRedisRepository baseRedisRepository, IClaimService claimService)
     {
         _context = context;
         _dbSet = context.Set<TEntity>();
-        _forcegetMongoFuncRepository = forcegetMongoFuncRepository;
+        _baseMongoRepository = baseMongoRepository;
+        _baseRedisRepository = baseRedisRepository;
+        _claimService = claimService;
     }
 
     public async Task<IDbContextTransaction> BeginTransactionAsync() => await _context.Database.BeginTransactionAsync();
@@ -43,7 +52,7 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
         var addedEntity = (await _dbSet.AddAsync(entity)).Entity;
         await _context.SaveChangesAsync();
 
-        await _forcegetMongoFuncRepository.CreateAsync(new History<TEntity>
+        await _baseMongoRepository.CreateAsync(new History<TEntity>
         {
             Action = MongoHistoryActionType.Add,
             CreationTime = DateTime.Now,
@@ -61,7 +70,7 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
         await _dbSet.AddRangeAsync(entities);
         var addedEntities = await _context.SaveChangesAsync();
 
-        await _forcegetMongoFuncRepository.CreateAllAsync<TEntity>(entities.Select(entity => new History<TEntity>
+        await _baseMongoRepository.CreateAllAsync<TEntity>(entities.Select(entity => new History<TEntity>
         {
             Action = MongoHistoryActionType.AddRange,
             CreationTime = DateTime.Now,
@@ -77,7 +86,7 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
         _dbSet.Update(entity);
         await _context.SaveChangesAsync();
 
-        await _forcegetMongoFuncRepository.CreateAsync(new History<TEntity>
+        await _baseMongoRepository.CreateAsync(new History<TEntity>
         {
             Action = MongoHistoryActionType.Update,
             CreationTime = DateTime.Now,
@@ -94,7 +103,7 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
         _dbSet.UpdateRange(entities);
         var result = await _context.SaveChangesAsync();
 
-        await _forcegetMongoFuncRepository.CreateAllAsync(entities.Select(entity => new History<TEntity>
+        await _baseMongoRepository.CreateAllAsync(entities.Select(entity => new History<TEntity>
         {
             Action = MongoHistoryActionType.UpdateRange,
             CreationTime = DateTime.Now,
@@ -113,7 +122,7 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
         _dbSet.Update(entity);
         await _context.SaveChangesAsync();
 
-        await _forcegetMongoFuncRepository.CreateAsync(new History<TEntity>
+        await _baseMongoRepository.CreateAsync(new History<TEntity>
         {
             Action = MongoHistoryActionType.Delete,
             CreationTime = DateTime.Now,
@@ -129,7 +138,7 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
         if (hardDelete != true) return await DeleteAsync(entity);
         _dbSet.Remove(entity);
 
-        await _forcegetMongoFuncRepository.CreateAsync(new History<TEntity>
+        await _baseMongoRepository.CreateAsync(new History<TEntity>
         {
             Action = MongoHistoryActionType.HardDelete,
             CreationTime = DateTime.Now,
@@ -145,7 +154,7 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
     public async Task<int> DeleteRangeAsync(List<TEntity> entities)
     {
         if (entities.Count == 0) return -1;
-        await _forcegetMongoFuncRepository.CreateAllAsync(entities.Select(entity => new History<TEntity>
+        await _baseMongoRepository.CreateAllAsync(entities.Select(entity => new History<TEntity>
         {
             Action = MongoHistoryActionType.DeleteRange,
             CreationTime = DateTime.Now,
@@ -174,7 +183,7 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
             return s;
         }));
 
-        await _forcegetMongoFuncRepository.CreateAllAsync(entities.Select(entity => new History<TEntity>
+        await _baseMongoRepository.CreateAllAsync(entities.Select(entity => new History<TEntity>
         {
             Action = MongoHistoryActionType.HardDeleteRange,
             CreationTime = DateTime.Now,
@@ -197,10 +206,41 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
         return entity ?? throw new ResourceNotFoundException(typeof(TEntity));
     }
 
-    public Task<int> CountAsync<TEntity>(IQueryable<TEntity> queryable, EntityFilter<TEntity> where) =>
-        queryable.CountAsync(where);
+    public async Task<int> CountAsync<TEntity>(IQueryable<TEntity> queryable, EntityFilter<TEntity> where)
+    {
+        queryable = await CompanyFilterAsync(queryable);
+        return await queryable.CountAsync(where);
+    }
 
-    public async Task<int> CountAsync(GetAllRequest<TEntity> model) => await _dbSet.CountAsync(model.Filter);
+    public async Task<int> CountAsync(GetAllRequest<TEntity> model)
+    {
+        var queryable = await CompanyFilterAsync(_dbSet);
+        return await _dbSet.CountAsync(model.Filter);
+    }
+
+    private async Task<IQueryable<TEntity>> CompanyFilterAsync<TEntity>(IQueryable<TEntity> queryable)
+    {
+        if (((IQueryable<InCompanyRefIdList>)queryable)!=null)
+        {
+            var userId = _claimService.GetUserId();
+            if (!string.IsNullOrEmpty(userId))
+            {
+                var roles = await _baseRedisRepository.GetAsync<List<ForcegetRole>>(
+                    $"ForcegetUser_ForcegetRole_{userId}");
+                if (roles != null && roles.All(a => a.name != "Admin"))
+                {
+                    var companyList = await _baseRedisRepository.GetAsync<List<MyCompanyResponseDto>>(
+                        $"ForcegetUser_MyCompanyResponse_{userId}");
+                    var companyRefList = companyList.Select(s => s.refid).ToList();
+
+                    queryable = queryable.Where(w =>
+                        companyRefList.Contains((w as InCompanyRefIdList).companyrefid.Value));
+                }
+            }
+        }
+
+        return queryable;
+    }
 
     public async Task<List<TEntity>> GetAllGenericAsync(GetAllRequest<TEntity> model)
     {
@@ -214,10 +254,12 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
             else
                 model.OrderBy = "id DESC";
         }
-        
+
         if (!string.IsNullOrEmpty(model.OrderBy))
             queryable = queryable.OrderBy(model.OrderBy);
-        
+
+        queryable = await CompanyFilterAsync(queryable);
+
         return await queryable
             .Skip(model.Skip)
             .Take(model.Take)
@@ -237,9 +279,11 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
             else
                 model.OrderBy = "id DESC";
         }
-        
+
         if (!string.IsNullOrEmpty(model.OrderBy))
             queryable = queryable.OrderBy(model.OrderBy);
+
+        queryable = await CompanyFilterAsync(queryable);
 
         return await queryable
             .Skip(model.Skip)
@@ -248,5 +292,5 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
     }
 
     public async Task<List<History<dynamic>>> GetAllHistory(HistoryRequest model) =>
-        await _forcegetMongoFuncRepository.GetHistoriesAsync(model);
+        await _baseMongoRepository.GetHistoriesAsync(model);
 }

@@ -5,6 +5,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <RootNamespace>N_Tier.Shared</RootNamespace>
         <IsPackable>true</IsPackable>
+        <Version>9.0.6501</Version>
     </PropertyGroup>
 
     <ItemGroup>

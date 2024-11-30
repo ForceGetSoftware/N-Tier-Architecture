@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using Forceget.Enums;
 using Plainquire.Filter.Abstractions;
 
