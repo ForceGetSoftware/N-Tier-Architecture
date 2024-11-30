@@ -7,6 +7,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using N_Tier.API.Filters;
 using N_Tier.Application.Models.Validators;
+using N_Tier.DataAccess.Repositories;
+using N_Tier.DataAccess.Repositories.Impl;
 using Plainquire.Filter.Mvc;
 using Plainquire.Filter.Swashbuckle;
 
@@ -76,7 +78,15 @@ public static class ApiDependencyInjection
 
         AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
+#if DEBUG
         services.AddDbContextPool<TAppDatabaseContext>(options =>
-            options.UseNpgsql(databaseConfig.ConnectionString).EnableDetailedErrors().EnableSensitiveDataLogging().EnableServiceProviderCaching());
+            options.UseNpgsql(databaseConfig.ConnectionString).EnableDetailedErrors().EnableServiceProviderCaching());
+#endif
+#if !DEBUG
+        services.AddDbContextPool<TAppDatabaseContext>(options =>
+            options.UseNpgsql(databaseConfig.ConnectionString).EnableServiceProviderCaching());
+#endif
+
+        services.AddScoped<IBaseCompanyFilterRepository, BaseCompanyFilterRepository>();
     }
 }
