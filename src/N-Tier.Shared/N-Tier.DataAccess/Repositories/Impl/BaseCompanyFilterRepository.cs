@@ -9,33 +9,24 @@ using Plainquire.Filter;
 
 namespace N_Tier.DataAccess.Repositories.Impl;
 
-public class BaseCompanyFilterRepository : IBaseCompanyFilterRepository
+public class BaseCompanyFilterRepository(IBaseRedisRepository baseRedisRepository, IClaimService claimService)
+    : IBaseCompanyFilterRepository
 {
-    private readonly IBaseRedisRepository _baseRedisRepository;
-    private readonly IClaimService _claimService;
-
-    public BaseCompanyFilterRepository(
-        IBaseRedisRepository baseRedisRepository, IClaimService claimService)
+    private async Task<IQueryable<TEntity>> CompanyFilterAsync<TEntity>(IQueryable<TEntity> queryable) where TEntity : InCompanyRefIdList
     {
-        _baseRedisRepository = baseRedisRepository;
-        _claimService = claimService;
-    }
-
-    private async Task<IQueryable<TEntity>> CompanyFilterAsync<TEntity>(IQueryable<TEntity> queryable)
-    {
-        var userId = _claimService.GetUserId();
+        var userId = claimService.GetUserId();
         if (!string.IsNullOrEmpty(userId))
         {
-            var roles = await _baseRedisRepository.GetAsync<List<ForcegetRole>>(
+            var roles = await baseRedisRepository.GetAsync<List<ForcegetRole>>(
                 $"ForcegetUser_ForcegetRole_{userId}");
             if (roles != null && roles.All(a => a.name != "Admin"))
             {
-                var companyList = await _baseRedisRepository.GetAsync<List<MyCompanyResponseDto>>(
+                var companyList = await baseRedisRepository.GetAsync<List<MyCompanyResponseDto>>(
                     $"ForcegetUser_MyCompanyResponse_{userId}");
                 var companyRefList = companyList.Select(s => s.refid).ToList();
 
                 queryable = queryable.Where(w =>
-                    companyRefList.Contains((w as InCompanyRefIdList).companyrefid.Value));
+                    companyRefList.Contains(w.companyrefid.Value));
             }
         }
         else
@@ -60,12 +51,7 @@ public class BaseCompanyFilterRepository : IBaseCompanyFilterRepository
         queryable = queryable.Where(model.Filter);
         if (string.IsNullOrEmpty(model.OrderBy))
         {
-            if (typeof(TEntity).GetProperty("createdon") != null)
-                model.OrderBy = "createdon DESC";
-            else if (typeof(TEntity).GetProperty("refid") != null)
-                model.OrderBy = "refid DESC";
-            else
-                model.OrderBy = "id DESC";
+            model.OrderBy = typeof(TEntity).GetProperty("createdon") != null ? "createdon DESC" : "id DESC";
         }
 
         if (!string.IsNullOrEmpty(model.OrderBy))
