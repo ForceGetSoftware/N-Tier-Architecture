@@ -57,6 +57,8 @@ public static class ApiDependencyInjection
                     Array.Empty<string>()
                 }
             });
+
+            s.OperationFilter<HeaderCompanyIdFilter>();
         });
     }
 
