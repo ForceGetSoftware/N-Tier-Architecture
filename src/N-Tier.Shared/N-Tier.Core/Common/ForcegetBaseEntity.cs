@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using Forceget.Enums;
 using Plainquire.Filter.Abstractions;
 
@@ -7,6 +8,7 @@ namespace N_Tier.Core.Common;
 [EntityFilter(Prefix = "")]
 public abstract class ForcegetBaseEntity : BaseEntity
 {
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)] 
     [Key] public int id { get; set; }
     
     public Guid refid { get; set; }
