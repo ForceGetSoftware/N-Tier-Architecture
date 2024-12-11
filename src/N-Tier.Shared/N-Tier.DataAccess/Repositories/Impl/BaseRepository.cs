@@ -9,6 +9,7 @@ using N_Tier.Shared.N_Tier.Application.Models;
 using N_Tier.Shared.N_Tier.Core.Common;
 using System.Linq.Dynamic.Core;
 using System.Linq.Expressions;
+using System.Reflection;
 using Microsoft.EntityFrameworkCore.Storage;
 using Plainquire.Filter;
 
@@ -40,6 +41,8 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
 
     public async Task<TEntity> AddAsync(TEntity entity)
 {
+    var id = typeof(TEntity).GetProperty("id");
+    if (id != null) throw new Exception($"Entity {typeof(TEntity).Name} with id: {id} - already exists.");
     var addedEntity = (await _dbSet.AddAsync(entity)).Entity;
     await _context.SaveChangesAsync();
 
