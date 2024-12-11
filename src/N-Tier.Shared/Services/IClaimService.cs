@@ -9,7 +9,7 @@ public interface IClaimService
     string GetCompanyId();
     string GetClaim(string key);
     string GetAuthorization();
-    bool IsSystemAdmin();
+    Task<bool> IsSystemAdmin();
     string GetRoleGroupTypeId();
     List<string> GetClaimList();
     JwtSecurityToken GetJwtToken();

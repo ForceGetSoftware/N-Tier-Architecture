@@ -1,10 +1,13 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using Auth.Core.Entities;
+using N_Tier.DataAccess.Repositories.Impl;
 
 namespace N_Tier.Shared.Services.Impl;
 
-public class ClaimService(IHttpContextAccessor httpContextAccessor) : IClaimService
+public class ClaimService(IHttpContextAccessor httpContextAccessor, IBaseRedisRepository baseRedisRepository)
+    : IClaimService
 {
     public string GetUserId()
     {
@@ -51,22 +54,25 @@ public class ClaimService(IHttpContextAccessor httpContextAccessor) : IClaimServ
     public JwtSecurityToken GetJwtToken()
     {
         var auth = GetAuthorization();
-        if(string.IsNullOrEmpty(auth)) return new JwtSecurityToken();
+        if (string.IsNullOrEmpty(auth)) return new JwtSecurityToken();
         const string bearerPrefix = "Bearer ";
         var authToken = auth.Substring(bearerPrefix.Length);
         var handler = new JwtSecurityTokenHandler();
-        if(!handler.CanReadToken(authToken)) return new JwtSecurityToken();
+        if (!handler.CanReadToken(authToken)) return new JwtSecurityToken();
         var jsonToken = handler.ReadToken(authToken);
         var token = jsonToken as JwtSecurityToken;
         return token;
     }
 
-    public bool IsSystemAdmin()
+    public async Task<bool> IsSystemAdmin()
     {
         try
         {
-            var token = GetJwtToken();
-            return token != null && token.Claims.Any(claim => claim.Value == "System Admin");
+            var userId = GetUserId();
+
+            var roles = await baseRedisRepository.GetAsync<List<ForcegetRole>>(
+                $"ForcegetUser_ForcegetRole_{userId}");
+            return roles.Any(a => a.name == "Admin");
         }
         catch
         {
