@@ -40,11 +40,6 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
 
     public async Task<TEntity> AddAsync(TEntity entity)
 {
-    var idProperty = typeof(TEntity).GetProperty("id");
-    if (idProperty != null)
-    {
-        idProperty.SetValue(entity, null);
-    }
     var addedEntity = (await _dbSet.AddAsync(entity)).Entity;
     await _context.SaveChangesAsync();
 
