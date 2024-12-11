@@ -39,21 +39,20 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
     }
 
     public async Task<TEntity> AddAsync(TEntity entity)
+{
+    var addedEntity = (await _dbSet.AddAsync(entity)).Entity;
+    await _context.SaveChangesAsync();
+
+    await _baseMongoRepository.CreateAsync(new History<TEntity>
     {
-        entity.id = default;
-        var addedEntity = (await _dbSet.AddAsync(entity)).Entity;
-        await _context.SaveChangesAsync();
+        Action = MongoHistoryActionType.Add,
+        CreationTime = DateTime.Now,
+        DbObject = addedEntity,
+        PrimaryRefId = entity.refid.ToString()
+    });
 
-        await _baseMongoRepository.CreateAsync(new History<TEntity>
-        {
-            Action = MongoHistoryActionType.Add,
-            CreationTime = DateTime.Now,
-            DbObject = addedEntity,
-            PrimaryRefId = entity.refid.ToString()
-        });
-
-        return addedEntity;
-    }
+    return addedEntity;
+}
 
     public async Task<int> AddRangeAsync(List<TEntity> entities)
     {
