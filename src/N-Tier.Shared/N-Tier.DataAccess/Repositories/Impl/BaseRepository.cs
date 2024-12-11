@@ -41,8 +41,6 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
 
     public async Task<TEntity> AddAsync(TEntity entity)
 {
-    var id = typeof(TEntity).GetProperty("id");
-    if (id != null) throw new Exception($"Entity {typeof(TEntity).Name} with id: {id} - already exists.");
     var addedEntity = (await _dbSet.AddAsync(entity)).Entity;
     await _context.SaveChangesAsync();
 
