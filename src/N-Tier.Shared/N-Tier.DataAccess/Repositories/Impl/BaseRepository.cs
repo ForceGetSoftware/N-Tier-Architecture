@@ -40,6 +40,7 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
 
     public async Task<TEntity> AddAsync(TEntity entity)
     {
+        entity.id = default;
         var addedEntity = (await _dbSet.AddAsync(entity)).Entity;
         await _context.SaveChangesAsync();
 
