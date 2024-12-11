@@ -14,7 +14,7 @@ using Plainquire.Filter;
 
 namespace N_Tier.DataAccess.Repositories.Impl;
 
-public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : class
+public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : ForcegetBaseEntity
 {
     private readonly DbContext _context;
     private readonly DbSet<TEntity> _dbSet;
@@ -48,7 +48,7 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
             Action = MongoHistoryActionType.Add,
             CreationTime = DateTime.Now,
             DbObject = addedEntity,
-            PrimaryRefId = ReflectionHelper.GetPropertyValue(addedEntity, "refid")
+            PrimaryRefId = entity.refid.ToString()
         });
 
         return addedEntity;
@@ -66,7 +66,7 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
             Action = MongoHistoryActionType.AddRange,
             CreationTime = DateTime.Now,
             DbObject = entity,
-            PrimaryRefId = ReflectionHelper.GetPropertyValue(entity, "refid")
+            PrimaryRefId = entity.refid.ToString()
         }).ToList());
 
         return addedEntities;
@@ -82,7 +82,7 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
             Action = MongoHistoryActionType.Update,
             CreationTime = DateTime.Now,
             DbObject = entity,
-            PrimaryRefId = ReflectionHelper.GetPropertyValue(entity, "refid")
+            PrimaryRefId = entity.refid.ToString()
         });
 
         return entity;
@@ -99,7 +99,7 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
             Action = MongoHistoryActionType.UpdateRange,
             CreationTime = DateTime.Now,
             DbObject = entity,
-            PrimaryRefId = ReflectionHelper.GetPropertyValue(entity, "refid")
+            PrimaryRefId = entity.refid.ToString()
         }).ToList());
 
         return result;
@@ -118,7 +118,7 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
             Action = MongoHistoryActionType.Delete,
             CreationTime = DateTime.Now,
             DbObject = entity,
-            PrimaryRefId = ReflectionHelper.GetPropertyValue(entity, "refid")
+            PrimaryRefId = entity.refid.ToString()
         });
 
         return entity;
@@ -134,7 +134,7 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
             Action = MongoHistoryActionType.HardDelete,
             CreationTime = DateTime.Now,
             DbObject = entity,
-            PrimaryRefId = ReflectionHelper.GetPropertyValue(entity, "refid")
+            PrimaryRefId = entity.refid.ToString()
         });
 
         await _context.SaveChangesAsync();
@@ -150,7 +150,7 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
             Action = MongoHistoryActionType.DeleteRange,
             CreationTime = DateTime.Now,
             DbObject = entity,
-            PrimaryRefId = ReflectionHelper.GetPropertyValue(entity, "refid")
+            PrimaryRefId = entity.refid.ToString()
         }).ToList());
 
         _dbSet.UpdateRange(entities.Select(entity =>
@@ -179,7 +179,7 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
             Action = MongoHistoryActionType.HardDeleteRange,
             CreationTime = DateTime.Now,
             DbObject = entity,
-            PrimaryRefId = ReflectionHelper.GetPropertyValue(entity, "refid")
+            PrimaryRefId = entity.refid.ToString()
         }).ToList());
 
         return await _context.SaveChangesAsync();
