@@ -40,7 +40,6 @@ public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : 
 
     public async Task<TEntity> AddAsync(TEntity entity)
     {
-        _context.Entry(entity).Property(e => e.id).IsTemporary = true;
         var addedEntity = (await _dbSet.AddAsync(entity)).Entity;
         await _context.SaveChangesAsync();
 
