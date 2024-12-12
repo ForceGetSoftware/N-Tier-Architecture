@@ -6,7 +6,7 @@ using N_Tier.DataAccess.Repositories.Impl;
 
 namespace N_Tier.Shared.Services.Impl;
 
-public class ClaimService(IHttpContextAccessor httpContextAccessor, IBaseRedisRepository baseRedisRepository)
+public class ClaimService(IHttpContextAccessor httpContextAccessor)
     : IClaimService
 {
     public string GetUserId()
@@ -64,7 +64,7 @@ public class ClaimService(IHttpContextAccessor httpContextAccessor, IBaseRedisRe
         return token;
     }
 
-    public async Task<bool> IsSystemAdmin()
+    public async Task<bool> IsSystemAdmin(IBaseRedisRepository baseRedisRepository)
     {
         try
         {
