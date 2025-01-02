@@ -3,6 +3,7 @@ using N_Tier.Shared.N_Tier.Core.Common;
 using System.Linq.Dynamic.Core;
 using Auth.Application.Models.Account;
 using Auth.Core.Entities;
+using Auth.Core.Enums;
 using N_Tier.Shared.N_Tier.DataAccess.Models;
 using N_Tier.Shared.Services;
 using Plainquire.Filter;
@@ -17,9 +18,9 @@ public class BaseCompanyFilterRepository(IBaseRedisRepository baseRedisRepositor
         var userId = claimService.GetUserId();
         if (!string.IsNullOrEmpty(userId))
         {
-            var roles = await baseRedisRepository.GetAsync<List<ForcegetRole>>(
-                $"ForcegetUser_ForcegetRole_{userId}");
-            if (roles != null && roles.All(a => a.name != "Admin"))
+            var userRoles = await baseRedisRepository.GetAsync<List<UserRole>>(
+                $"ForcegetUser_UserRole_{userId}");
+            if (userRoles != null && userRoles.All(a => a.companyroletype != ECompanyRoleType.All))
             {
                 var companyList = await baseRedisRepository.GetAsync<List<MyCompanyResponseDto>>(
                     $"ForcegetUser_MyCompanyResponse_{userId}");
