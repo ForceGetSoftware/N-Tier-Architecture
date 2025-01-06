@@ -45,8 +45,8 @@ public class BaseCompanyFilterRepository(IBaseRedisRepository baseRedisRepositor
         return await queryable.CountAsync(where);
     }
     
-    public async Task<double> SumAsync<TEntity, TEntity2>(IQueryable<TEntity> queryable, EntityFilter<TEntity2> where)
-        where TEntity : InCompanyRefIdSumList, TEntity2
+    public async Task<double> SumAsync<TEntity>(IQueryable<InCompanyRefIdSumList> queryable, EntityFilter<TEntity> where)
+        where TEntity : InCompanyRefIdList
     {
         queryable = await CompanyFilterAsync(queryable);
         return await queryable.Where(where).SumAsync(f=>f.Value);
