@@ -13,7 +13,7 @@ namespace N_Tier.DataAccess.Repositories.Impl;
 public class BaseCompanyFilterRepository(IBaseRedisRepository baseRedisRepository, IClaimService claimService)
     : IBaseCompanyFilterRepository
 {
-    private async Task<IQueryable<TEntity>> CompanyFilterAsync<TEntity>(IQueryable<TEntity> queryable) where TEntity : InCompanyRefIdList
+    public async Task<IQueryable<TEntity>> CompanyFilterAsync<TEntity>(IQueryable<TEntity> queryable) where TEntity : InCompanyRefIdList
     {
         var userId = claimService.GetUserId();
         if (!string.IsNullOrEmpty(userId))
@@ -45,12 +45,6 @@ public class BaseCompanyFilterRepository(IBaseRedisRepository baseRedisRepositor
         return await queryable.CountAsync(where);
     }
     
-    public async Task<double> SumAsync<TEntity>(IQueryable<InCompanyRefIdSumList> queryable, EntityFilter<TEntity> where)
-        where TEntity : InCompanyRefIdList
-    {
-        queryable = await CompanyFilterAsync(queryable);
-        return await queryable.Where(where).SumAsync(f=>f.Value);
-    }
 
     public async Task<List<TEntity>> GetAllGenericAsync<TEntity>(IQueryable<TEntity> queryable,
         GetAllRequest<TEntity> model) where TEntity : InCompanyRefIdList

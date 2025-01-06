@@ -6,10 +6,10 @@ namespace N_Tier.DataAccess.Repositories;
 
 public interface IBaseCompanyFilterRepository
 {
+    Task<IQueryable<TEntity>> CompanyFilterAsync<TEntity>(IQueryable<TEntity> queryable)
+        where TEntity : InCompanyRefIdList;
+    
     Task<int> CountAsync<TEntity>(IQueryable<TEntity> queryable, EntityFilter<TEntity> where) where TEntity : InCompanyRefIdList;
 
     Task<List<TEntity>> GetAllGenericAsync<TEntity>(IQueryable<TEntity> queryable, GetAllRequest<TEntity> model) where TEntity : InCompanyRefIdList;
-
-    Task<double> SumAsync<TEntity>(IQueryable<InCompanyRefIdSumList> queryable, EntityFilter<TEntity> where)
-        where TEntity : InCompanyRefIdList;
 }
