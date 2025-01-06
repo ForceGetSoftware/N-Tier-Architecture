@@ -9,4 +9,7 @@ public interface IBaseCompanyFilterRepository
     Task<int> CountAsync<TEntity>(IQueryable<TEntity> queryable, EntityFilter<TEntity> where) where TEntity : InCompanyRefIdList;
 
     Task<List<TEntity>> GetAllGenericAsync<TEntity>(IQueryable<TEntity> queryable, GetAllRequest<TEntity> model) where TEntity : InCompanyRefIdList;
+
+    Task<double> SumAsync<TEntity>(IQueryable<TEntity> queryable, EntityFilter<TEntity> where)
+        where TEntity : InCompanyRefIdSumList;
 }
