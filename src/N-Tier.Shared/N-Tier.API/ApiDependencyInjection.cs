@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
@@ -24,6 +25,11 @@ public static class ApiDependencyInjection
 
         services.AddFluentValidationAutoValidation();
         services.AddValidatorsFromAssemblyContaining(typeof(IValidationsMarker));
+        
+        services.AddResponseCompression(options =>
+        {
+            options.EnableForHttps = true;
+        });
     }
 
 
