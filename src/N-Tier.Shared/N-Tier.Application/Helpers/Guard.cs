@@ -1,4 +1,5 @@
 using System.Text;
+using System.Text.Json;
 using Auth.Core.Entities;
 
 namespace N_Tier.Shared.N_Tier.Application.Helpers;
@@ -21,7 +22,7 @@ public static class Guard
         {
             var client = httpClientFactory.CreateClient();
             var response =
-                await client.PostAsync(dbitem.url, new StringContent(body, Encoding.UTF8, "application/json"));
+                await client.PostAsync(dbitem.url, new StringContent(JsonSerializer.Serialize(body), Encoding.UTF8, "application/json"));
             if (!response.IsSuccessStatusCode)
             {
                 var exception =
