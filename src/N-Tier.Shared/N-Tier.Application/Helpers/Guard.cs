@@ -15,18 +15,16 @@ public static class Guard
         }
     }
 
-    public static async void N8N<TException>(N8nWorkflows dbitem, IHttpClientFactory httpClientFactory, dynamic body)
-        where TException : Exception, new()
+    public static async Task<string> N8N(N8nWorkflows dbitem, IHttpClientFactory httpClientFactory, dynamic body)
     {
-        if (dbitem != null)
+        if (dbitem == null) return null;
+        var client = httpClientFactory.CreateClient();
+        var response =
+            await client.PostAsync(dbitem.url, new StringContent(JsonSerializer.Serialize(body), Encoding.UTF8, "application/json"));
+        if (!response.IsSuccessStatusCode)
         {
-            var client = httpClientFactory.CreateClient();
-            var response =
-                await client.PostAsync(dbitem.url, new StringContent(JsonSerializer.Serialize(body), Encoding.UTF8, "application/json"));
-            if (!response.IsSuccessStatusCode)
-            {
-                throw new Exception(await response.Content.ReadAsStringAsync());
-            }
+            return await response.Content.ReadAsStringAsync();
         }
+        return null;
     }
 }
