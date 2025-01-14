@@ -2,11 +2,13 @@
 using N_Tier.Core.Common;
 using N_Tier.Shared.Services;
 using System.Reflection;
+using Auth.Core.Entities;
 
 namespace N_Tier.DataAccess.Persistence;
 
 public class ForcegetDatabaseContext(DbContextOptions options, IClaimService claimService) : DbContext(options)
 {
+    public DbSet<N8nWorkflows> N8nWorkflows { get; set; }
     protected override void OnModelCreating(ModelBuilder builder)
     {
         builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
