@@ -10,7 +10,6 @@ using N_Tier.API.Filters;
 using N_Tier.Application.Models.Validators;
 using N_Tier.DataAccess.Repositories;
 using N_Tier.DataAccess.Repositories.Impl;
-using N_Tier.Shared.N_Tier.DataAccess.Repositories;
 using Plainquire.Filter.Mvc;
 using Plainquire.Filter.Swashbuckle;
 
@@ -97,6 +96,5 @@ public static class ApiDependencyInjection
 #endif
 
         services.AddScoped<IBaseCompanyFilterRepository, BaseCompanyFilterRepository>();
-        services.AddScoped<IN8nWorkflowsRepository, N8nWorkflowsRepository>();
     }
 }

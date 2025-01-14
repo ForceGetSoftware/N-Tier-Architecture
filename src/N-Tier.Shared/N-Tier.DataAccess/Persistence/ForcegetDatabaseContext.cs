@@ -2,7 +2,6 @@
 using N_Tier.Core.Common;
 using N_Tier.Shared.Services;
 using System.Reflection;
-using Auth.Core.Entities;
 
 namespace N_Tier.DataAccess.Persistence;
 
