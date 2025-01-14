@@ -25,10 +25,7 @@ public static class Guard
                 await client.PostAsync(dbitem.url, new StringContent(JsonSerializer.Serialize(body), Encoding.UTF8, "application/json"));
             if (!response.IsSuccessStatusCode)
             {
-                var exception =
-                    (TException)Activator.CreateInstance(typeof(TException),
-                        await response.Content.ReadAsStringAsync());
-                throw exception;
+                throw new Exception(await response.Content.ReadAsStringAsync());
             }
         }
     }
